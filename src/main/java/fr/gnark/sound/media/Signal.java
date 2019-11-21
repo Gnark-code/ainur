@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Signal {
-    private static final double oneOnPi = 1 / Math.PI;
-    private static final double twoOnPi = 2 * oneOnPi;
-    private static final double fourOnPi = 4 * oneOnPi;
+    private static final double ONE_ON_PI = 1 / Math.PI;
+    private static final double TWO_ON_PI = 2 * ONE_ON_PI;
+    private static final double FOUR_ON_PI = 4 * ONE_ON_PI;
 
     private final double twoPiF;
 
@@ -38,7 +38,7 @@ public class Signal {
 
     public Signal addHarmonics(final int nbHarmonic) {
         for (int i = 0; i < nbHarmonic; i++) {
-            harmonics.add(Harmonic.builder().index(i).amplitude((double) (1 / nbHarmonic)).build());
+            harmonics.add(Harmonic.builder().index(i).amplitude(1.0 / nbHarmonic).build());
         }
         return this;
     }
@@ -90,18 +90,18 @@ public class Signal {
                 result = Math.signum(getSinWithHarmonics(time));
                 break;
             case SQUARE_SYNTHESIS:
-                result = fourOnPi * (Math.sin(twoPiF * time));
+                result = FOUR_ON_PI * (Math.sin(twoPiF * time));
                 for (final Harmonic harmonic : harmonics) {
                     int k = harmonic.getRank();
                     if (harmonic.isOdd()) {
-                        result += (fourOnPi * (Math.sin(k * twoPiF * time) / k));
+                        result += (FOUR_ON_PI * (Math.sin(k * twoPiF * time) / k));
                     }
                 }
                 result = result / 2;
                 break;
 
             case TRIANGLE:
-                result = (twoOnPi) * Math.asin(Math.sin(twoPiF * time));
+                result = (TWO_ON_PI) * Math.asin(Math.sin(twoPiF * time));
                 break;
             case SAWTOOTH:
                 double tf = time * fundamentalFrequency;
@@ -109,7 +109,7 @@ public class Signal {
                 break;
             case SAWTOOTH_ALT:
                 //not the same phase
-                result = -(twoOnPi) * Math.atan(1 / Math.tan(Math.PI * fundamentalFrequency * time));
+                result = -(TWO_ON_PI) * Math.atan(1 / Math.tan(Math.PI * fundamentalFrequency * time));
                 break;
             case SAWTOOTH_SYNTHESIS:
                 result = 0;
@@ -121,7 +121,7 @@ public class Signal {
                     } else {
                         sign = 1;
                     }
-                    result -= (twoOnPi) * sign * (Math.sin(twoPiF * k * time) / k);
+                    result -= (TWO_ON_PI) * sign * (Math.sin(twoPiF * k * time) / k);
                 }
                 break;
         }

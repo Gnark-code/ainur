@@ -43,8 +43,7 @@ public class Note {
     }
 
     public Double convertToFrequency() {
-        final Double octave = (double) (this.octave + 1);
-        return this.baseNote.getLowestFrequency() * Math.pow(2, octave);
+        return this.baseNote.getLowestFrequency() * Math.pow(2, octave + 1.0);
     }
 
     public Note copyWithOctaveModifier(final Integer octaveModifier) {

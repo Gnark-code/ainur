@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
+import java.util.Iterator;
+
 @EqualsAndHashCode
 @Getter
 @Log
@@ -31,7 +33,9 @@ public class Encoder {
             double amplitudeR = 0;
             double amplitudeL = 0;
             double time = sample / (double) throughput;
-            for (final Event event : events.getEvents()) {
+            final Iterator<Event> iterator = events.getEvents();
+            while (iterator.hasNext()) {
+                final Event event = iterator.next();
                 amplitudeR += (event.getAmplitude() / 2) / 100;
                 amplitudeL += (event.getAmplitude() / 2) / 100;
                 //apply panning if necessary
@@ -41,9 +45,9 @@ public class Encoder {
                 }
                 computed += event.getSignal().computeFormula(time);
             }
-            computed = computed / events.getEvents().size();
-            amplitudeR = amplitudeR / events.getEvents().size();
-            amplitudeL = amplitudeL / events.getEvents().size();
+            computed = computed / events.size();
+            amplitudeR = amplitudeR / events.size();
+            amplitudeL = amplitudeL / events.size();
             if (!events.isPause()) {
                 output.storeData(amplitudeR * computed, amplitudeL * computed);
             } else {

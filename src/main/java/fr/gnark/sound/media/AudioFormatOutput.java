@@ -18,7 +18,6 @@ public class AudioFormatOutput implements Output {
     private final AudioFormat format;
     private final SourceDataLine line;
 
-    //50  MB of buffer available
     private byte[] _buffer;
     private int bufferIndex = 0;
 
@@ -36,6 +35,7 @@ public class AudioFormatOutput implements Output {
     }
 
     private void newBuffer() {
+        //50  MB of buffer available
         _buffer = new byte[50000000];
         bufferIndex = 0;
     }
