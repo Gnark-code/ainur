@@ -54,8 +54,8 @@ public class AudioFormatOutput implements Output {
 
     @Override
     public void storeData(final double levelLeft, final double levelRight) {
-        int castLevelRight = (int) (levelLeft * GAIN);
-        int castLevelLeft = (int) (levelRight * GAIN);
+        int castLevelLeft = (int) (levelLeft * GAIN);
+        int castLevelRight = (int) (levelRight * GAIN);
 
         _buffer[bufferIndex] = (byte) (castLevelLeft);
         _buffer[bufferIndex + 1] = (byte) (castLevelLeft >>> 8);

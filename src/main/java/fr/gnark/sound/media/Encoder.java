@@ -49,7 +49,7 @@ public class Encoder {
             amplitudeR = amplitudeR / events.size();
             amplitudeL = amplitudeL / events.size();
             if (!events.isPause()) {
-                output.storeData(amplitudeR * computed, amplitudeL * computed);
+                output.storeData(amplitudeL * computed, amplitudeR * computed);
             } else {
                 output.storeData(0, 0);
             }
