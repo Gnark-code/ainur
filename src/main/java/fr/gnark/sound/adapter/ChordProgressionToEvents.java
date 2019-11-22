@@ -37,34 +37,64 @@ public class ChordProgressionToEvents {
                 final List<Event> events = chord.getBassNotes().stream()
                         .map(ChordProgressionToEvents::pitchToEvent)
                         .collect(Collectors.toList());
+
                 if (UNISON.equals(chord.getPlaystyle())) {
+                /*    2 -----------
+                      3 -----------
+                      3 -----------
+                      1 -----------
+                      <- duration ->
+                     */
                     events.addAll(mapChordToEvents(chord));
                     result.add(new Events(events, startTime, duration));
+
                     startTime += duration;
                 } else if (ONE_WAY_ARPEGGIO.equals(chord.getPlaystyle())) {
+                   /*           2
+                             3
+                          3
+                       1
+                      <- duration ->
+                     */
                     for (int i = 0; i < chord.getNotes().size(); i++) {
                         final long noteDuration = (duration / chord.getNotes().size());
 
                         result.add(new Events(singletonList(pitchToEvent(chord.getNotes().get(i))), startTime, noteDuration));
+
                         startTime += noteDuration;
                     }
                 } else if (ARPEGGIO.equals(chord.getPlaystyle())) {
+                   /*       4
+                          3   3
+                        3       3
+                      1           1
+                      <- duration ->
+                     */
                     final int nbNotes = (chord.getNotes().size() * 2) - 1;
                     final long noteDuration = (duration / nbNotes);
                     for (int i = 0; i < chord.getNotes().size(); i++) {
                         events.add(pitchToEvent(chord.getNotes().get(i)));
                         result.add(new Events(events, startTime, noteDuration));
+
                         startTime += noteDuration;
                     }
                     for (int j = chord.getNotes().size() - 2; j > 0; j--) {
                         events.add(pitchToEvent(chord.getNotes().get(j)));
                         result.add(new Events(events, startTime, noteDuration));
+
                         startTime += noteDuration;
                     }
                 } else if (RAKE.equals(chord.getPlaystyle())) {
+                    /*      4 ------
+                          3 --------
+                        3 ---let----
+                      1 ------ring--
+                      <- duration ->
+                     */
                     for (int i = 0; i < chord.getNotes().size(); i++) {
                         events.add(pitchToEvent(chord.getNotes().get(i)));
-                        result.add(new Events(new ArrayList<>(events), startTime, RAKE_INDEX));
+                        Events newEvents = new Events(new ArrayList<>(events), startTime, RAKE_INDEX);
+                        result.add(newEvents);
                         startTime += RAKE_INDEX;
                     }
                     result.add(new Events(mapChordToEvents(chord), startTime, duration - chord.getNotes().size() * RAKE_INDEX));
