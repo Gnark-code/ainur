@@ -1,12 +1,14 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 
-public class RythmicPatterns {
+public class RythmicPatterns extends DomainObject {
     private final List<RythmicPattern> patterns;
 
     public RythmicPatterns() {
@@ -19,7 +21,24 @@ public class RythmicPatterns {
 
     public RythmicPatterns addRythmicPattern(final List<Subdivision> subdivisions, final Degree degree) {
         patterns.add(RythmicPattern.builder()
-                .subdivisions(subdivisions).degree(degree).build());
+                .subdivisions(subdivisions).degree(degree)
+                .playstyle(PlayStyle.UNISON)
+                .build());
+        return this;
+    }
+
+    public RythmicPatterns addRythmicPattern(final List<Subdivision> subdivisions,
+                                             final Degree degree,
+                                             final Alterations alterations,
+                                             final Integer numberOfNotes,
+                                             final PlayStyle playStyle) {
+        patterns.add(RythmicPattern.builder()
+                .subdivisions(subdivisions)
+                .degree(degree)
+                .alterations(alterations)
+                .numberOfNotes(numberOfNotes)
+                .playstyle(playStyle)
+                .build());
         return this;
     }
 

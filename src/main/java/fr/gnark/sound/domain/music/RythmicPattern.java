@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 import static fr.gnark.sound.domain.music.Alterations.emptyAlterations;
 
 @Builder
-public class RythmicPattern {
+public class RythmicPattern extends DomainObject {
     private final List<Subdivision> subdivisions;
     private final Degree degree;
     private final Integer numberOfNotes;
@@ -38,5 +39,9 @@ public class RythmicPattern {
 
     public Alterations getAlterations() {
         return alterations;
+    }
+
+    public PlayStyle getPlaystyle() {
+        return playstyle;
     }
 }

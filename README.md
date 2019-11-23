@@ -1,4 +1,4 @@
-# ainur
+# Ainur
 repository for Project Ainur
 
 Ainur : The Ainur are the immortal spirits existing before Creation in J. R. R. Tolkien's fictional universe. (Wikipedia)

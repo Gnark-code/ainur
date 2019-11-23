@@ -1,10 +1,12 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
-public class Subdivision {
+public class Subdivision extends DomainObject {
     public enum Type {
         WHOLE,
         HALF,
@@ -21,7 +23,7 @@ public class Subdivision {
     private boolean isDotted;
 
     @Builder
-    public Subdivision(final Type type, final boolean isPause, final boolean isTriplet, final boolean isDotted) {
+    public Subdivision(@NonNull final Type type, final boolean isPause, final boolean isTriplet, final boolean isDotted) {
         this.type = type;
         this.isPause = isPause;
         this.isTriplet = isTriplet;

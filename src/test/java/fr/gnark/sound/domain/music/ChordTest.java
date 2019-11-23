@@ -437,6 +437,35 @@ class ChordTest {
         assertNote(I.getNotes().get(3), BaseNote.D, 3);
     }
 
+    @Test
+    public void testBassNotes() {
+        final Mode mode = Mode.MAJOR;
+        final Note rootNote = Note.builder()
+                .octave(2)
+                .baseNote(BaseNote.D).build();
+
+        Chord I = Chord.builder().mode(mode)
+                .rootNote(rootNote).degree(Degree.I)
+                .bassPattern(Chord.BassPattern.OCTAVE_BASS)
+                .build();
+        assertNote(I.getBassNotes().get(0), BaseNote.D, 1);
+        I = Chord.builder().mode(mode)
+                .rootNote(rootNote).degree(Degree.I)
+                .bassPattern(Chord.BassPattern.DOUBLE_OCTAVE_BASS)
+                .build();
+        assertNote(I.getBassNotes().get(0), BaseNote.D, 1);
+        assertNote(I.getBassNotes().get(1), BaseNote.D, 0);
+
+        I = Chord.builder().mode(mode)
+                .rootNote(rootNote).degree(Degree.I)
+                .bassPattern(Chord.BassPattern.POWER_CHORD)
+                .build();
+        assertNote(I.getBassNotes().get(0), BaseNote.D, 1);
+        assertNote(I.getBassNotes().get(1), BaseNote.A, 0);
+        assertNote(I.getBassNotes().get(2), BaseNote.D, 0);
+    }
+
+
     private void assertNote(Note pitch,
                             BaseNote baseNote, int octave) {
         assertEquals(baseNote, pitch.getBaseNote());

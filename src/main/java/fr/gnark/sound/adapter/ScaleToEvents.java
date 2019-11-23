@@ -1,10 +1,9 @@
 package fr.gnark.sound.adapter;
 
+import fr.gnark.sound.domain.media.Event;
+import fr.gnark.sound.domain.media.Events;
 import fr.gnark.sound.domain.music.Note;
 import fr.gnark.sound.domain.music.Scale;
-import fr.gnark.sound.media.Event;
-import fr.gnark.sound.media.Events;
-import fr.gnark.sound.media.Signal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +42,6 @@ public class ScaleToEvents {
         return Event.builder()
                 .frequency(freq)
                 .amplitude(100f)
-                .signal(new Signal(Signal.SIGNAL_TYPE.TRIANGLE, freq)
-                        .addHarmonics(4)
-                        .computeBuffer()
-                )
                 .build();
     }
 }

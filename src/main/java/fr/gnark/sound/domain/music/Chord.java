@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Gnark on 01/11/2019.
  */
-public class Chord {
+public class Chord extends DomainObject {
     private final Mode mode;
     private final Note rootNote;
     @Getter
@@ -74,7 +75,7 @@ public class Chord {
             case POWER_CHORD:
                 final Note otherBassNote = lookup(notesOfTheMode, degree.ordinal()).copyWithDecrementedOctave();
                 final Note lowerBassNote = otherBassNote.copyWithDecrementedOctave();
-                final Note fifth = lowerBassNote.transpose(5);
+                final Note fifth = lowerBassNote.transpose(7);
                 this.bassNotes.add(otherBassNote);
                 this.bassNotes.add(fifth);
                 this.bassNotes.add(lowerBassNote);

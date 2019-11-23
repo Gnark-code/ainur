@@ -50,7 +50,6 @@ public class BaseNote {
     //lowest frequency in equal temperament
     BaseNote(final double lowestFrequency) {
         this.lowestFrequency = lowestFrequency;
-
     }
 
     public static final BaseNote getByIndexInTheScale(final int index) {

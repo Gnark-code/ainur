@@ -1,9 +1,9 @@
-package fr.gnark.sound.media;
+package fr.gnark.sound.domain.media;
 
 import lombok.extern.java.Log;
 
-import javax.sound.sampled.LineUnavailableException;
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 
 /**
@@ -12,13 +12,10 @@ import java.util.Iterator;
 @Log
 public class Player {
     private final Encoder encoder;
+    private final Deque<Events> backlog;
 
-    private final ArrayDeque<Events> backlog;
-    private final double definitionInMs;
-
-    public Player(final int bpm, final double ticksByWholeNote) throws LineUnavailableException {
-        this.definitionInMs = 60000.0 / (bpm * (ticksByWholeNote / 4));
-        this.encoder = new Encoder("SAWTOOTH", definitionInMs, new AudioFormatOutput());
+    public Player(final Encoder encoder) {
+        this.encoder = encoder;
         backlog = new ArrayDeque<>();
     }
 

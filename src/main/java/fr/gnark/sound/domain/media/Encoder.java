@@ -1,4 +1,4 @@
-package fr.gnark.sound.media;
+package fr.gnark.sound.domain.media;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,11 +14,13 @@ public class Encoder {
     private final double definitionInMs;
     private final String name;
     private final Output output;
+    private final Signal signal;
 
-    public Encoder(final String name, final double definitionInMs, final Output output) {
+    public Encoder(final String name, final double definitionInMs, final Output output, final Signal signal) {
         this.output = output;
         this.definitionInMs = definitionInMs;
         this.name = name;
+        this.signal = signal;
     }
 
     public void handleEvents(final Events events) {
@@ -43,7 +45,7 @@ public class Encoder {
                     amplitudeR += amplitudeR * (event.getPanning() / 100);
                     amplitudeL -= amplitudeL * (event.getPanning() / 100);
                 }
-                computed += event.getSignal().computeFormula(time);
+                computed += signal.computeFormula(event.getFrequency(), time);
             }
             computed = computed / events.size();
             amplitudeR = amplitudeR / events.size();

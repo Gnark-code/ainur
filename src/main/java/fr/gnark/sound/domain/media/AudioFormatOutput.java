@@ -1,4 +1,4 @@
-package fr.gnark.sound.media;
+package fr.gnark.sound.domain.media;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

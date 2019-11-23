@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 import static fr.gnark.sound.domain.music.Subdivision.Type.*;
 import static java.util.Arrays.asList;
 
-public class RythmicTemplate {
+public class RythmicTemplate extends DomainObject {
 
     public static final RythmicTemplate REGGAE_COT_COT
             = new RythmicTemplate(asList(getPause(_8th), getSubdivision(_16Th), getSubdivision(_16Th),

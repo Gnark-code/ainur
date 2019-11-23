@@ -1,4 +1,4 @@
-package fr.gnark.sound.media;
+package fr.gnark.sound.domain.media;
 
 import lombok.Getter;
 import lombok.ToString;

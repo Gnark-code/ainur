@@ -6,6 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class Alterations {
+    private static final Alterations EMPTY = Alterations.builder().build();
     private Integer octaveModifier;
     private Integer inversion;
     private boolean addOctave;
@@ -17,6 +18,6 @@ public class Alterations {
     }
 
     public static Alterations emptyAlterations() {
-        return Alterations.builder().build();
+        return EMPTY;
     }
 }

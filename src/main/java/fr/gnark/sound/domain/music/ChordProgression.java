@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,15 +13,17 @@ import java.util.List;
  */
 @Builder
 @Getter
-public class ChordProgression {
+public class ChordProgression extends DomainObject {
     private final Mode mode;
     private final Note rootNote;
     private final RythmicPatterns rythmicPatterns;
+    private final Chord.BassPattern bassPattern;
 
-    public ChordProgression(final Mode mode, final Note rootNote, final RythmicPatterns rythmicPatterns) {
+    public ChordProgression(final Mode mode, final Note rootNote, final RythmicPatterns rythmicPatterns, final Chord.BassPattern bassPattern) {
         this.mode = mode;
         this.rootNote = rootNote;
         this.rythmicPatterns = rythmicPatterns;
+        this.bassPattern = bassPattern != null ? bassPattern : Chord.BassPattern.NO_BASS;
     }
 
     public List<PlayableChord> generateChords() {
@@ -33,13 +36,13 @@ public class ChordProgression {
                     .rootNote(rootNote)
                     .numberOfNotes(currentItem.getNumberOfNotes())
                     .degree(currentItem.getDegree())
-                    .bassPattern(Chord.BassPattern.NO_BASS)
+                    .bassPattern(bassPattern)
                     .alterations(currentItem.getAlterations())
                     .build();
             for (Subdivision subdivision : currentItem.getSubdivisions()) {
                 final PlayableChord playableChord = PlayableChord.builder().chord(chord)
                         .duration(subdivision)
-                        .playstyle(PlayStyle.UNISON)
+                        .playstyle(currentItem.getPlaystyle())
                         .build();
                 result.add(playableChord);
             }

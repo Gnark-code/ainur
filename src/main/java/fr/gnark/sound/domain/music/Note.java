@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Getter
 @ToString
-public class Note {
+public class Note extends DomainObject {
     private static final short NB_STEPS = 12;
     private final BaseNote baseNote;
     // from 0 to 8

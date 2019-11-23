@@ -1,5 +1,6 @@
-package fr.gnark.sound.media;
+package fr.gnark.sound.domain.media;
 
+import fr.gnark.sound.domain.media.waveforms.SineWave;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchart.QuickChart;
@@ -11,15 +12,15 @@ import java.util.List;
 /**
  * Class used to debug Signal processing
  */
-@Disabled
+@Disabled("Useful to debug waveforms")
 class SignalTest {
 
     @Test
     void computeBuffer() throws InterruptedException {
-        Signal signal = new Signal(Signal.SIGNAL_TYPE.SAWTOOTH_ALT, 440)
+        Signal signal = new SineWave()
                 .addHarmonics(15)
-                .computeBuffer();
-        List<Double> buffer = signal.getBuffer();
+                .initBufferIfNecessary(440);
+        List<Double> buffer = signal.getBuffer().get(440);
         double[] xData = new double[buffer.size()];
         double[] yData = new double[buffer.size()];
         for (int i = 0; i < buffer.size(); i++) {

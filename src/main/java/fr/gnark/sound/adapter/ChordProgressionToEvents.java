@@ -1,25 +1,20 @@
 package fr.gnark.sound.adapter;
 
-import fr.gnark.sound.domain.music.ChordProgression;
-import fr.gnark.sound.domain.music.Note;
-import fr.gnark.sound.domain.music.PlayableChord;
-import fr.gnark.sound.domain.music.Subdivision;
-import fr.gnark.sound.media.Event;
-import fr.gnark.sound.media.Events;
-import fr.gnark.sound.media.Signal;
+import fr.gnark.sound.domain.media.Event;
+import fr.gnark.sound.domain.media.Events;
+import fr.gnark.sound.domain.music.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static fr.gnark.sound.domain.music.PlayStyle.*;
-import static java.util.Collections.singletonList;
 
 /**
  * Created by Gnark on 13/07/2019.
  */
 public class ChordProgressionToEvents {
-    private static final int RAKE_INDEX = 1;
+    private static final int RAKE_INDEX = 2;
     private final long ticksByWholeNote;
 
     public ChordProgressionToEvents(final long ticksByWholeNote) {
@@ -33,72 +28,21 @@ public class ChordProgressionToEvents {
         long startTime = 0;
         for (final PlayableChord chord : chords) {
             final long duration = getTicks(chord.getDuration());
+            final PlayStyle playstyle = chord.getPlaystyle();
             if (!chord.getDuration().isPause()) {
-                final List<Event> events = chord.getBassNotes().stream()
+                final List<Event> bassNotesEvents = chord.getBassNotes().stream()
                         .map(ChordProgressionToEvents::pitchToEvent)
                         .collect(Collectors.toList());
 
-                if (UNISON.equals(chord.getPlaystyle())) {
-                /*    2 -----------
-                      3 -----------
-                      3 -----------
-                      1 -----------
-                      <- duration ->
-                     */
-                    events.addAll(mapChordToEvents(chord));
-                    result.add(new Events(events, startTime, duration));
 
-                    startTime += duration;
-                } else if (ONE_WAY_ARPEGGIO.equals(chord.getPlaystyle())) {
-                   /*           2
-                             3
-                          3
-                       1
-                      <- duration ->
-                     */
-                    for (int i = 0; i < chord.getNotes().size(); i++) {
-                        final long noteDuration = (duration / chord.getNotes().size());
-
-                        result.add(new Events(singletonList(pitchToEvent(chord.getNotes().get(i))), startTime, noteDuration));
-
-                        startTime += noteDuration;
-                    }
-                } else if (ARPEGGIO.equals(chord.getPlaystyle())) {
-                   /*       4
-                          3   3
-                        3       3
-                      1           1
-                      <- duration ->
-                     */
-                    final int nbNotes = (chord.getNotes().size() * 2) - 1;
-                    final long noteDuration = (duration / nbNotes);
-                    for (int i = 0; i < chord.getNotes().size(); i++) {
-                        events.add(pitchToEvent(chord.getNotes().get(i)));
-                        result.add(new Events(events, startTime, noteDuration));
-
-                        startTime += noteDuration;
-                    }
-                    for (int j = chord.getNotes().size() - 2; j > 0; j--) {
-                        events.add(pitchToEvent(chord.getNotes().get(j)));
-                        result.add(new Events(events, startTime, noteDuration));
-
-                        startTime += noteDuration;
-                    }
-                } else if (RAKE.equals(chord.getPlaystyle())) {
-                    /*      4 ------
-                          3 --------
-                        3 ---let----
-                      1 ------ring--
-                      <- duration ->
-                     */
-                    for (int i = 0; i < chord.getNotes().size(); i++) {
-                        events.add(pitchToEvent(chord.getNotes().get(i)));
-                        Events newEvents = new Events(new ArrayList<>(events), startTime, RAKE_INDEX);
-                        result.add(newEvents);
-                        startTime += RAKE_INDEX;
-                    }
-                    result.add(new Events(mapChordToEvents(chord), startTime, duration - chord.getNotes().size() * RAKE_INDEX));
-                    startTime += duration - chord.getNotes().size() * RAKE_INDEX;
+                if (UNISON.equals(playstyle)) {
+                    startTime = mapUnison(result, startTime, chord, duration, bassNotesEvents);
+                } else if (ONE_WAY_ARPEGGIO.equals(playstyle)) {
+                    startTime = mapOneWayArpeggio(result, startTime, chord, duration, bassNotesEvents);
+                } else if (ARPEGGIO.equals(playstyle)) {
+                    startTime = mapArpeggio(result, startTime, chord, duration, bassNotesEvents);
+                } else if (RAKE.equals(playstyle)) {
+                    startTime = mapRake(result, startTime, chord, duration, bassNotesEvents);
                 }
             } else {
                 result.add(Events.pause(duration));
@@ -106,6 +50,92 @@ public class ChordProgressionToEvents {
         }
         return result;
     }
+
+    /**
+     * 2 -----------
+     * 3 -----------
+     * 3 -----------
+     * 1 -----------
+     * <- duration ->
+     */
+    private long mapUnison(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
+
+        events.addAll(mapChordToEvents(chord));
+        result.add(new Events(events, startTime, duration));
+
+        startTime += duration;
+        return startTime;
+    }
+
+    /**
+     * 2
+     * 3
+     * 3
+     * 1
+     * <-duration->
+     */
+    private long mapOneWayArpeggio(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
+
+        for (int i = 0; i < chord.getNotes().size(); i++) {
+            final long noteDuration = (duration / chord.getNotes().size());
+            final List<Event> eventsAdded = new ArrayList<>();
+            eventsAdded.add(pitchToEvent(chord.getNotes().get(i)));
+            eventsAdded.addAll(events);
+            result.add(new Events(eventsAdded, startTime, noteDuration));
+            startTime += noteDuration;
+        }
+        return startTime;
+    }
+
+    /**
+     * 4
+     * 3    3
+     * 3        3
+     * 1           1
+     * <- duration ->
+     */
+    private long mapArpeggio(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
+
+        final int nbNotes = (chord.getNotes().size() * 2) - 1;
+        final long noteDuration = (duration / nbNotes);
+        for (int i = 0; i < chord.getNotes().size(); i++) {
+            final List<Event> eventsAdded = new ArrayList<>();
+            eventsAdded.add(pitchToEvent(chord.getNotes().get(i)));
+            eventsAdded.addAll(events);
+            result.add(new Events(eventsAdded, startTime, noteDuration));
+
+            startTime += noteDuration;
+        }
+        for (int j = chord.getNotes().size() - 2; j > 0; j--) {
+            final List<Event> eventsAdded = new ArrayList<>();
+            eventsAdded.add(pitchToEvent(chord.getNotes().get(j)));
+            eventsAdded.addAll(events);
+            result.add(new Events(eventsAdded, startTime, noteDuration));
+
+            startTime += noteDuration;
+        }
+        return startTime;
+    }
+
+    /**
+     * 4 ----
+     * 3 -------
+     * 3 ---let----
+     * 1 ------ring--
+     * <- duration ->
+     */
+    private long mapRake(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
+        for (int i = 0; i < chord.getNotes().size(); i++) {
+            events.add(pitchToEvent(chord.getNotes().get(i)));
+            Events newEvents = new Events(new ArrayList<>(events), startTime, RAKE_INDEX);
+            result.add(newEvents);
+            startTime += RAKE_INDEX;
+        }
+        result.add(new Events(mapChordToEvents(chord), startTime, duration - chord.getNotes().size() * RAKE_INDEX));
+        startTime += duration - chord.getNotes().size() * RAKE_INDEX;
+        return startTime;
+    }
+
 
     private List<Event> mapChordToEvents(final PlayableChord chord) {
         final List<Event> events = new ArrayList<>();
@@ -131,10 +161,6 @@ public class ChordProgressionToEvents {
         return Event.builder()
                 .frequency(freq)
                 .amplitude(100f)
-                .signal(new Signal(Signal.SIGNAL_TYPE.SAWTOOTH_SYNTHESIS, freq)
-                        .addHarmonics(5)
-                        .computeBuffer()
-                )
                 .build();
     }
 

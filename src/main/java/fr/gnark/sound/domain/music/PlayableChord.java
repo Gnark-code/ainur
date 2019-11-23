@@ -1,12 +1,13 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class PlayableChord {
+public class PlayableChord extends DomainObject {
     private final Chord chord;
     private final PlayStyle playstyle;
     private final Subdivision duration;

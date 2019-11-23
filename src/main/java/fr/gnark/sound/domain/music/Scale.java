@@ -1,12 +1,13 @@
 package fr.gnark.sound.domain.music;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scale {
+public class Scale extends DomainObject {
     private final Note rootNote;
     @Getter
     private final List<Note> notes;

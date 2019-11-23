@@ -1,4 +1,4 @@
-package fr.gnark.sound.media;
+package fr.gnark.sound.domain.media;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,14 +18,12 @@ public class Event {
     private Float panning;
     // in percentage between 0 and 100 : default 100
     private Float amplitude;
-    private Signal signal;
 
     @Builder
-    public Event(final Double frequency, final Float panning, final Float amplitude, final Signal signal) {
+    public Event(final Double frequency, final Float panning, final Float amplitude) {
         this.frequency = frequency;
         this.panning = panning;
         this.amplitude = amplitude;
-        this.signal = signal;
         validateAllFields();
     }
 
