@@ -1,0 +1,12 @@
+type MusicEnums {
+    degrees:[String!],
+    modes:[String!],
+    bassPatterns:[String!],
+    subdivisions:[String!],
+    notes:[String!]
+}
+
+# base query to fetch the music domains enum
+type Query {
+    getMusicEnums: MusicEnums!
+}

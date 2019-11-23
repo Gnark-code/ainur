@@ -2,13 +2,13 @@ package fr.gnark.sound.domain.media;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Iterator;
 
 @EqualsAndHashCode
 @Getter
-@Log
+@Slf4j
 public class Encoder {
     //duration of a clock tick in milliseconds
     private final double definitionInMs;

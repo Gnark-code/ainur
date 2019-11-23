@@ -1,6 +1,6 @@
 package fr.gnark.sound.domain.media;
 
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -9,7 +9,7 @@ import java.util.Iterator;
 /**
  * Created by Gnark on 13/04/2019.
  */
-@Log
+@Slf4j
 public class Player {
     private final Encoder encoder;
     private final Deque<Events> backlog;

@@ -68,10 +68,10 @@ public class ChordProgressionToEvents {
     }
 
     /**
-     * 2
-     * 3
-     * 3
-     * 1
+     *        2
+     *      3
+     *    3
+     *  1
      * <-duration->
      */
     private long mapOneWayArpeggio(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
@@ -88,11 +88,11 @@ public class ChordProgressionToEvents {
     }
 
     /**
-     * 4
-     * 3    3
-     * 3        3
-     * 1           1
-     * <- duration ->
+     *      4
+     *    3   3
+     *  3       3
+     * 1          1
+     * <-duration ->
      */
     private long mapArpeggio(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
 
@@ -118,10 +118,10 @@ public class ChordProgressionToEvents {
     }
 
     /**
-     * 4 ----
-     * 3 -------
-     * 3 ---let----
-     * 1 ------ring--
+     *      4  ----
+     *    3  ------
+     *  3 ---let---
+     * 1 -----ring-
      * <- duration ->
      */
     private long mapRake(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {
