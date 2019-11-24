@@ -25,5 +25,6 @@ class QueryTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         final String body = responseEntity.getBody();
         assertTrue(body.contains("\"C\""));
+        assertTrue(body.contains("\"III\""));
     }
 }
