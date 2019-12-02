@@ -6,11 +6,14 @@ import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
+
 Vue.use(VueApollo)
 Vue.config.productionTip = false
+
+
 const httpLink = new HttpLink({
   // You should use an absolute URL here
-  uri: 'http://127.0.0.1:8080/ainur/graphql-api'
+  uri: 'http://127.0.0.1:54123/ainur/graphql-api'
 })
 
 const apolloClient = new ApolloClient({

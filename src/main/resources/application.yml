@@ -1,8 +1,10 @@
 logging:
   level:
+    root: DEBUG
     org.springframework: ERROR
     com.gnark: INFO
-
+server:
+  port : 54123
 graphql:
   servlet:
     mapping: /ainur/graphql-api
