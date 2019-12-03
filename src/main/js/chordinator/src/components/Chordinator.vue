@@ -1,5 +1,29 @@
 <script>
 
+var initSocket = function(objectWaitingToBeSent){
+    var socket = new WebSocket("ws://127.0.0.1:54123/play/scale");
+    // Lorsque la connexion est établie.
+    socket.onopen = function() {
+        /*console.log("Connexion établie.");
+
+        // Lorsque la connexion se termine.
+        this.onclose = function(event) {
+            //console.log("Connexion terminé.");
+        };
+
+        // Lorsque le serveur envoi un message.
+        this.onmessage = function(event) {
+            //console.log("Message:", event.data);
+        };
+            */
+        if(objectWaitingToBeSent){
+            this.send(objectWaitingToBeSent);
+        }
+    };
+   
+    return socket;
+};
+
 import { GET_ALL_MUSIC_ENUMS } from "../graphql/queries.js"
 export default {
     name: 'Chordinator',
@@ -7,17 +31,25 @@ export default {
         return {
             loading: true,
             musicEnums: null, 
-            socket: new WebSocket("ws://127.0.0.1:54123/play/scale"),
+            socket: null,
             modeSelected: null,
+            messageReceived: null,
             isConnected: false,
         }
     },
   
-    playScale (){
-        this.socket.send("TEST");
+    methods : {
+        playScale : function(){
+            if(this.socket.readyState === this.socket.__proto__.OPEN){
+                  this.socket.send("TEST");
+            }else{
+                this.socket= initSocket("TEST");
+            }
+        }
     },
     async mounted () {
-        this.musicEnums = await this.$apollo.query({ query: GET_ALL_MUSIC_ENUMS })
+        this.musicEnums = await this.$apollo.query({ query: GET_ALL_MUSIC_ENUMS });
+        this.socket = initSocket();
         this.loading = false
     }
 }
@@ -33,7 +65,8 @@ export default {
             </select>
             <span>Selected : {{ modeSelected }}</span>
                 <p v-if="isConnected">We're connected to the server!</p>
-            <button @click="playScale()">Play scale</button>
+            <button  v-on:click="playScale">Play scale</button>
         </div>
+            <div> event received from {{ messageReceived }}</div>   
     </div>
 </template>

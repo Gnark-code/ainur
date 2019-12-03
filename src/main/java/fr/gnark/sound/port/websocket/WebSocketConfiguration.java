@@ -12,6 +12,6 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     @Autowired
     private ScalePlayerHandler scalePlayerHandler;
     public void registerWebSocketHandlers(final WebSocketHandlerRegistry registry) {
-        registry.addHandler(scalePlayerHandler, "/play/scale");
+        registry.addHandler(scalePlayerHandler, "/play/scale").setAllowedOrigins("http://localhost:8080");
     }
 }

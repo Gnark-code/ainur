@@ -25,9 +25,11 @@ public class ScalePlayerHandler extends TextWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message)
             throws InterruptedException, IOException {
 
+        final byte[] data= new byte[10000];
+        data[0] = (byte)1;
         for(WebSocketSession webSocketSession : sessions) {
 
-            webSocketSession.sendMessage(new BinaryMessage(new byte[1]));
+            webSocketSession.sendMessage(new BinaryMessage(data));
         }
     }
 
