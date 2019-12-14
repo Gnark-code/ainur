@@ -7,6 +7,7 @@ import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 
+
 Vue.use(VueApollo)
 Vue.config.productionTip = false
 

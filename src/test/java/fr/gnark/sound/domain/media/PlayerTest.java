@@ -4,6 +4,8 @@ import fr.gnark.sound.adapter.ChordProgressionToEvents;
 import fr.gnark.sound.adapter.ScaleToEvents;
 import fr.gnark.sound.domain.media.waveforms.SawtoothWaveWithSynthesis;
 import fr.gnark.sound.domain.music.*;
+import graphql.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +58,7 @@ public class PlayerTest {
                 .bassPattern(Chord.BassPattern.OCTAVE_BASS)
                 .rythmicPatterns(rythmicPatterns)
                 .build();
-
+        Assert.assertNotNull(chordProgression);
         //index in the resolution
         CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
                 .forEach(player::postEvents);
@@ -79,7 +81,7 @@ public class PlayerTest {
                 .rythmicPatterns(rythmicPatterns)
                 .bassPattern(Chord.BassPattern.DOUBLE_OCTAVE_BASS)
                 .build();
-
+        Assert.assertNotNull(chordProgression);
 
         //index in the resolution
         CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
@@ -102,7 +104,7 @@ public class PlayerTest {
                         .baseNote(BaseNote.C).build())
                 .rythmicPatterns(rythmicPatterns)
                 .build();
-
+        Assert.assertNotNull(chordProgression);
 
         //index in the resolution
         CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
@@ -125,7 +127,7 @@ public class PlayerTest {
                         .baseNote(BaseNote.C).build())
                 .rythmicPatterns(rythmicPatterns)
                 .build();
-
+        Assert.assertNotNull(chordProgression);
 
         //index in the resolution
         CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
@@ -138,6 +140,8 @@ public class PlayerTest {
         final Note note = Note.builder().octave(1).baseNote(BaseNote.B_FLAT).build();
         //index in the resolution
         ScaleToEvents scaleToEvents = new ScaleToEvents(TICKS_BY_WHOLE_NOTE / 16, 4);
+        Assertions.assertNotNull(scaleToEvents);
+
         scaleToEvents.map(new Scale(Mode.UKRAINIAN_DORIAN, note))
                 .forEach(player::postEvents);
         scaleToEvents.map(new Scale(Mode.PHRYGIAN_DOMINANT, note))
@@ -151,10 +155,10 @@ public class PlayerTest {
     public void testBass() {
         final List<Subdivision> wholeNote = Arrays.asList(Subdivision.builder().type(Subdivision.Type.HALF).build());
         final RythmicPatterns rythmicPatterns = new RythmicPatterns()
-                .addRythmicPattern(wholeNote, Degree.I, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
-                .addRythmicPattern(wholeNote, Degree.VI, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
-                .addRythmicPattern(wholeNote, Degree.II, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
-                .addRythmicPattern(wholeNote, Degree.IV, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
+                .addRythmicPattern(wholeNote, Degree.I, emptyAlterations(), 5, PlayStyle.RAKE)
+                .addRythmicPattern(wholeNote, Degree.VI, emptyAlterations(), 5, PlayStyle.RAKE)
+                .addRythmicPattern(wholeNote, Degree.II, emptyAlterations(), 5, PlayStyle.RAKE)
+                .addRythmicPattern(wholeNote, Degree.IV, emptyAlterations(), 5, PlayStyle.RAKE)
                 .addRythmicPattern(wholeNote, Degree.III, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
                 .addRythmicPattern(wholeNote, Degree.VII, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
                 .addRythmicPattern(wholeNote, Degree.V, emptyAlterations(), 5, PlayStyle.ARPEGGIO)
@@ -169,7 +173,7 @@ public class PlayerTest {
                 .rythmicPatterns(rythmicPatterns)
                 .build();
 
-
+        Assert.assertNotNull(chordProgression);
         //index in the resolution
         CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
                 .forEach(player::postEvents);
@@ -183,6 +187,7 @@ public class PlayerTest {
         final Note B = Note.builder().octave(1).baseNote(BaseNote.B).build();
         //index in the resolution
         ScaleToEvents scaleToEvents = new ScaleToEvents(TICKS_BY_WHOLE_NOTE / 16, 4);
+        Assert.assertNotNull(scaleToEvents);
         scaleToEvents.map(new Scale(asList(2, 2, 3), C))
                 .forEach(player::postEvents);
 

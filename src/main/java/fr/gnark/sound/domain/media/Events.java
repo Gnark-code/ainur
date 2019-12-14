@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 
 @ToString
+/**
+ * Simultaneous events
+ */
 public class Events {
     private final List<Event> _events;
     @Getter

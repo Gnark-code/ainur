@@ -1,12 +1,19 @@
 package fr.gnark.sound.domain.media;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
+import org.apache.commons.io.IOUtils;
+import org.springframework.stereotype.Component;
 
+import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+
+@Component
 public class AudioFormatOutput implements Output {
     protected static final AudioFormat.Encoding ENCODING = AudioFormat.Encoding.PCM_SIGNED;
+    public static final int MAX_BUFFER_SIZE = 50000000;
     public static final double SAMPLE_RATE = 44100;
     protected static final int SAMPLE_SIZE_IN_BITS = 16;
     protected static final int CHANNELS = 2;
@@ -30,13 +37,27 @@ public class AudioFormatOutput implements Output {
 
 
     public void flush() {
-        processData(_buffer);
+        processData(getBuffer());
         newBuffer();
+    }
+
+    public byte[] toWavBuffer() throws IOException {
+        File out = File.createTempFile("wav", ".wav");
+        out.deleteOnExit();
+        final byte[] data = getBuffer();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        AudioInputStream audioInputStream = new AudioInputStream(bais, format, data.length);
+        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, out);
+        audioInputStream.close();
+        newBuffer();
+        final byte[] wavOutput = IOUtils.toByteArray(new FileInputStream(out));
+        Files.delete(out.toPath());
+        return wavOutput;
     }
 
     private void newBuffer() {
         //50  MB of buffer available
-        _buffer = new byte[50000000];
+        _buffer = new byte[MAX_BUFFER_SIZE];
         bufferIndex = 0;
     }
 
@@ -72,5 +93,12 @@ public class AudioFormatOutput implements Output {
     @Override
     public int getFrameSize() {
         return FRAME_SIZE;
+    }
+
+    @Override
+    public byte[] getBuffer() {
+        byte[] minData = new byte[bufferIndex];
+        System.arraycopy(_buffer, 0, minData, 0, bufferIndex);
+        return minData;
     }
 }

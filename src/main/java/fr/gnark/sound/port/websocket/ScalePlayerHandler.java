@@ -1,6 +1,7 @@
 package fr.gnark.sound.port.websocket;
 
 import fr.gnark.sound.applications.ScaleAGogo;
+import fr.gnark.sound.domain.music.Mode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
@@ -23,14 +24,10 @@ public class ScalePlayerHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)
-            throws InterruptedException, IOException {
+            throws IOException {
 
-        final byte[] data= new byte[10000];
-        data[0] = (byte)1;
-        for(WebSocketSession webSocketSession : sessions) {
-
-            webSocketSession.sendMessage(new BinaryMessage(data));
-        }
+        final Mode mode = Mode.valueOf(message.getPayload());
+        session.sendMessage(new BinaryMessage(application.getPreviewData(mode)));
     }
 
     @Override

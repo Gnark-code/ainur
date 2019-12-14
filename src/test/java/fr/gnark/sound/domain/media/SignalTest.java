@@ -1,6 +1,7 @@
 package fr.gnark.sound.domain.media;
 
-import fr.gnark.sound.domain.media.waveforms.SineWave;
+import fr.gnark.sound.domain.media.waveforms.SquareWave;
+import graphql.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchart.QuickChart;
@@ -17,10 +18,10 @@ class SignalTest {
 
     @Test
     void computeBuffer() throws InterruptedException {
-        Signal signal = new SineWave()
-                .addHarmonics(15)
+        Signal signal = new SquareWave()
+                .addHarmonics(200)
                 .initBufferIfNecessary(440);
-        List<Double> buffer = signal.getBuffer().get(440);
+        List<Double> buffer = signal.getBuffer().get(440.0);
         double[] xData = new double[buffer.size()];
         double[] yData = new double[buffer.size()];
         for (int i = 0; i < buffer.size(); i++) {
@@ -30,7 +31,7 @@ class SignalTest {
 
         // Create Chart
         XYChart chart = QuickChart.getChart("Sample Chart", "X", "Y", "y(x)", xData, yData);
-
+        Assert.assertNotNull(chart);
         // Show it
         new SwingWrapper<>(chart).displayChart();
         Thread.sleep(10000);

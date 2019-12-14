@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 @EqualsAndHashCode
@@ -60,5 +61,12 @@ public class Encoder {
 
     public void flush() {
         output.flush();
+    }
+
+    public byte[] getEncodedData() throws IOException {
+        if (this.output instanceof AudioFormatOutput) {
+            return ((AudioFormatOutput) output).toWavBuffer();
+        }
+        return output.getBuffer();
     }
 }
