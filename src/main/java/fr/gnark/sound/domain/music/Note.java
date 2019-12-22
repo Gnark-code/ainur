@@ -16,7 +16,7 @@ import lombok.ToString;
 public class Note extends DomainObject {
     private static final short NB_STEPS = 12;
     private final BaseNote baseNote;
-    // from 0 to 8
+    // from 0 to 10
     private int octave;
 
     public Note(BaseNote baseNote, int octave) {
@@ -65,8 +65,8 @@ public class Note extends DomainObject {
     }
 
     private void assertOctave(int octave) {
-        if (octave < 0 || octave > 8) {
-            throw new IllegalArgumentException("octave should be set between 0 and 8");
+        if (octave < 0 || octave > 10) {
+            throw new IllegalArgumentException("octave should be set between 0 and 8. value read:" + octave);
         }
     }
 

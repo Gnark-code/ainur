@@ -2,7 +2,6 @@ package fr.gnark.sound.domain.media;
 
 import fr.gnark.sound.domain.media.waveforms.SquareWave;
 import graphql.Assert;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
@@ -13,7 +12,7 @@ import java.util.List;
 /**
  * Class used to debug Signal processing
  */
-@Disabled("Useful to debug waveforms")
+//@Disabled("Useful to debug waveforms")
 class SignalTest {
 
     @Test
@@ -36,4 +35,5 @@ class SignalTest {
         new SwingWrapper<>(chart).displayChart();
         Thread.sleep(10000);
     }
+
 }

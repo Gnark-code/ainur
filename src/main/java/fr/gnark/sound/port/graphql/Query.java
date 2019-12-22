@@ -6,6 +6,7 @@ import fr.gnark.sound.domain.music.Degree;
 import fr.gnark.sound.domain.music.Mode;
 import fr.gnark.sound.domain.music.Subdivision;
 import fr.gnark.sound.port.graphql.dto.MusicEnumsDto;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 
 @Component
+@Profile("!offline")
 public class Query implements GraphQLQueryResolver {
     public MusicEnumsDto getMusicEnums() {
         final MusicEnumsDto dto = new MusicEnumsDto();

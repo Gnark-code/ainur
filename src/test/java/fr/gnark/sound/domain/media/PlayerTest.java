@@ -2,6 +2,7 @@ package fr.gnark.sound.domain.media;
 
 import fr.gnark.sound.adapter.ChordProgressionToEvents;
 import fr.gnark.sound.adapter.ScaleToEvents;
+import fr.gnark.sound.domain.media.output.AudioFormatOutput;
 import fr.gnark.sound.domain.media.waveforms.SawtoothWaveWithSynthesis;
 import fr.gnark.sound.domain.music.*;
 import graphql.Assert;

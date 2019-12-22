@@ -1,5 +1,7 @@
 package fr.gnark.sound.domain.media;
 
+import fr.gnark.sound.domain.media.output.AudioFormatOutput;
+
 import java.util.*;
 
 public abstract class Signal {

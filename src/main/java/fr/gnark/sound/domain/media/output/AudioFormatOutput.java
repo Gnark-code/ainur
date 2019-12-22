@@ -1,5 +1,7 @@
-package fr.gnark.sound.domain.media;
+package fr.gnark.sound.domain.media.output;
 
+import fr.gnark.sound.domain.media.Output;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 @Component
+@Slf4j
 public class AudioFormatOutput implements Output {
     protected static final AudioFormat.Encoding ENCODING = AudioFormat.Encoding.PCM_SIGNED;
     public static final int MAX_BUFFER_SIZE = 50000000;
@@ -37,10 +40,14 @@ public class AudioFormatOutput implements Output {
 
 
     public void flush() {
+        writeCleanupBytes(1024);
         processData(getBuffer());
         newBuffer();
     }
 
+    /**
+     * TODO : work on a less horrible way to add the WAV description bits
+     */
     public byte[] toWavBuffer() throws IOException {
         File out = File.createTempFile("wav", ".wav");
         out.deleteOnExit();
@@ -63,13 +70,36 @@ public class AudioFormatOutput implements Output {
 
     private void processData(final byte[] bytes) {
         try {
-            line.open(format, (int) SAMPLE_RATE);
-            line.start();
+            if (!line.isOpen()) {
+                line.open(format, (int) SAMPLE_RATE);
+                line.start();
+            }
             line.write(bytes, 0, bufferIndex);
             line.drain();
             line.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error caught", e);
+        }
+    }
+
+    /**
+     * smoothly write the data back to 0
+     */
+    private void writeCleanupBytes(final int sizeOfCleanup) {
+        int lastLevelLeft = (_buffer[bufferIndex - 3] << 8) + (_buffer[bufferIndex - 4] & 0xff);
+        int lastLevelRight = (_buffer[bufferIndex - 1] << 8) + (_buffer[bufferIndex - 2] & 0xff);
+
+        int deltaLeft = lastLevelLeft / sizeOfCleanup;
+        int deltaRight = lastLevelRight / sizeOfCleanup;
+        for (int i = 0; i < sizeOfCleanup * FRAME_SIZE; i = i + FRAME_SIZE) {
+            lastLevelLeft -= deltaLeft;
+            lastLevelRight -= deltaRight;
+
+            _buffer[bufferIndex] = (byte) (lastLevelLeft);
+            _buffer[bufferIndex + 1] = (byte) (lastLevelLeft >>> 8);
+            _buffer[bufferIndex + 2] = (byte) (lastLevelRight);
+            _buffer[bufferIndex + 3] = (byte) (lastLevelRight >>> 8);
+            bufferIndex = bufferIndex + 4;
         }
     }
 
@@ -100,5 +130,10 @@ public class AudioFormatOutput implements Output {
         byte[] minData = new byte[bufferIndex];
         System.arraycopy(_buffer, 0, minData, 0, bufferIndex);
         return minData;
+    }
+
+    @Override
+    public void cleanup() {
+        writeCleanupBytes(64);
     }
 }

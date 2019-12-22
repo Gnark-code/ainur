@@ -1,6 +1,6 @@
 package fr.gnark.sound.applications;
 
-import fr.gnark.sound.domain.media.AudioFormatOutput;
+import fr.gnark.sound.domain.media.output.AudioFormatOutput;
 import fr.gnark.sound.domain.music.Mode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

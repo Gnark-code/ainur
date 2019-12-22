@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.media;
 
+import fr.gnark.sound.domain.media.output.AudioFormatOutput;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ public class Encoder {
     private final String name;
     private final Output output;
     private final Signal signal;
-
     public Encoder(final String name, final double definitionInMs, final Output output, final Signal signal) {
         this.output = output;
         this.definitionInMs = definitionInMs;
@@ -28,6 +28,7 @@ public class Encoder {
         final long throughput = output.getThroughputInBytes();
         final int frameSize = output.getFrameSize();
         double seconds = (events.getDurationInClockTicks() * definitionInMs) / 1000;
+        seconds -= (256.0 / 44100.0);
         int nbBytes = (int) (seconds * throughput);
         // truncate to the nearest complete frame
         nbBytes = nbBytes - (nbBytes % frameSize);
@@ -39,8 +40,8 @@ public class Encoder {
             final Iterator<Event> iterator = events.getEvents();
             while (iterator.hasNext()) {
                 final Event event = iterator.next();
-                amplitudeR += (event.getAmplitude() / 2) / 100;
-                amplitudeL += (event.getAmplitude() / 2) / 100;
+                amplitudeR += ((event.getAmplitude()) / 100);
+                amplitudeL += ((event.getAmplitude()) / 100);
                 //apply panning if necessary
                 if (event.getPanning().compareTo(0.0f) != 0) {
                     amplitudeR += amplitudeR * (event.getPanning() / 100);
@@ -57,6 +58,7 @@ public class Encoder {
                 output.storeData(0, 0);
             }
         }
+        output.cleanup();
     }
 
     public void flush() {
@@ -69,4 +71,5 @@ public class Encoder {
         }
         return output.getBuffer();
     }
+
 }

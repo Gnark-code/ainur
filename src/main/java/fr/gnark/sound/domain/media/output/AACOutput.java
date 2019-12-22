@@ -1,5 +1,6 @@
-package fr.gnark.sound.domain.media;
+package fr.gnark.sound.domain.media.output;
 
+import fr.gnark.sound.domain.media.Output;
 import org.sheinbergon.aac.encoder.AACAudioEncoder;
 import org.sheinbergon.aac.encoder.WAVAudioInput;
 import org.sheinbergon.aac.encoder.util.AACEncodingProfile;
@@ -52,5 +53,10 @@ public class AACOutput implements Output {
 
         return aacAudioEncoder.conclude()
                 .data();
+    }
+
+    @Override
+    public void cleanup() {
+
     }
 }

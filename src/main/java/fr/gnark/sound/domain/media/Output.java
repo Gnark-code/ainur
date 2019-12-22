@@ -10,4 +10,7 @@ public interface Output {
     int getFrameSize();
 
     byte[] getBuffer();
+
+    void cleanup();
+
 }

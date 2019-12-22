@@ -1,9 +1,9 @@
 package fr.gnark.sound.applications;
 
 import fr.gnark.sound.adapter.ScaleToEvents;
-import fr.gnark.sound.domain.media.AudioFormatOutput;
 import fr.gnark.sound.domain.media.Encoder;
 import fr.gnark.sound.domain.media.Events;
+import fr.gnark.sound.domain.media.output.AudioFormatOutput;
 import fr.gnark.sound.domain.media.waveforms.SawtoothWave;
 import fr.gnark.sound.domain.music.BaseNote;
 import fr.gnark.sound.domain.music.Mode;
