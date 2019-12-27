@@ -34,8 +34,16 @@ public class Events {
         return this._events.iterator();
     }
 
-    public void remove(final double frequency) {
-        _events.removeIf(event -> event.getFrequency() == frequency);
+    public Event get(final double frequency) {
+        return _events.stream().filter(e -> e.getFrequency() == frequency).findFirst().orElse(null);
+    }
+
+    public Event remove(final double frequency) {
+        Event event = _events.stream().filter(e -> e.getFrequency() == frequency).findFirst().orElse(null);
+        if (event != null) {
+            _events.remove(event);
+        }
+        return event;
     }
 
     public final boolean isEmpty() {

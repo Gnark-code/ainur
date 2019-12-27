@@ -3,7 +3,9 @@ package fr.gnark.sound.domain.media;
 import fr.gnark.sound.adapter.ChordProgressionToEvents;
 import fr.gnark.sound.adapter.ScaleToEvents;
 import fr.gnark.sound.domain.media.output.AudioFormatOutput;
+import fr.gnark.sound.domain.media.waveforms.EnvelopeADSR;
 import fr.gnark.sound.domain.media.waveforms.SawtoothWaveWithSynthesis;
+import fr.gnark.sound.domain.media.waveforms.SineWave;
 import fr.gnark.sound.domain.music.*;
 import graphql.Assert;
 import org.junit.jupiter.api.Assertions;
@@ -26,15 +28,14 @@ import static java.util.Arrays.asList;
 public class PlayerTest {
     private static final int TICKS_BY_WHOLE_NOTE = 128;
     private static final ChordProgressionToEvents CHORD_PROGRESSION_TO_EVENTS = new ChordProgressionToEvents(TICKS_BY_WHOLE_NOTE);
-    private static int BPM = 135;
-
-    private final Player player;
+    private static int BPM = 85;
+    final double definitionInMs = 60000.0 / (BPM * (TICKS_BY_WHOLE_NOTE / 4.0));
+    private Player player;
 
 
     public PlayerTest() throws LineUnavailableException {
-        final double definitionInMs = 60000.0 / (BPM * (TICKS_BY_WHOLE_NOTE / 4.0));
         Encoder encoder = new Encoder("SAWTOOTH", definitionInMs, new AudioFormatOutput(),
-                new SawtoothWaveWithSynthesis().addHarmonics(5)
+                new SineWave()
         );
 
         player = new Player(encoder);
@@ -206,6 +207,46 @@ public class PlayerTest {
                 .forEach(player::postEvents);
 
         scaleToEvents.map(new Scale(asList(3, 5, 2), B))
+                .forEach(player::postEvents);
+
+        player.play();
+    }
+
+    @Test
+    public void testRelease() throws LineUnavailableException {
+
+        Encoder encoder = new Encoder("SAWTOOTH", definitionInMs, new AudioFormatOutput(),
+                new SawtoothWaveWithSynthesis().addHarmonics(5)
+        );
+        encoder.setEnvelope(EnvelopeADSR.builder()
+                .attackInSeconds(1.0)
+                .decayInSeconds(1.0)
+                .sustainFactorinDbfs(-3.0)
+                .releaseInSeconds(0.5)
+                .build());
+        player = new Player(encoder);
+        final RythmicPatterns rythmicPatterns = new RythmicPatterns();
+        Subdivision subdivision = Subdivision.builder().type(Subdivision.Type.WHOLE).build();
+        Subdivision pause = Subdivision.builder().type(Subdivision.Type.WHOLE).isPause(true).build();
+
+        rythmicPatterns
+                .addRythmicPattern(subdivision, Degree.V)
+                .addRythmicPattern(subdivision, Degree.II)
+                .addRythmicPattern(subdivision, Degree.VI)
+                .addRythmicPattern(pause, Degree.IV)
+        ;
+
+        final ChordProgression chordProgression = ChordProgression.builder()
+                .mode(Mode.MAJOR)
+                .rootNote(Note.builder().octave(2)
+                        .baseNote(BaseNote.E_FLAT)
+                        .build())
+                .bassPattern(Chord.BassPattern.OCTAVE_BASS)
+                .rythmicPatterns(rythmicPatterns)
+                .build();
+        Assert.assertNotNull(chordProgression);
+        //index in the resolution
+        CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
                 .forEach(player::postEvents);
 
         player.play();

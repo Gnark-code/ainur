@@ -1,6 +1,6 @@
 package fr.gnark.sound.port.midi.in;
 
-import fr.gnark.sound.applications.RealtimePlayer;
+import fr.gnark.sound.applications.Synthetizer;
 import fr.gnark.sound.domain.music.BaseNote;
 import fr.gnark.sound.domain.music.Note;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +19,12 @@ import static javax.sound.midi.ShortMessage.*;
 public class MidiInputReceiver implements Receiver {
     @Value("${midi.input.name:null}")
     private String inputName;
-    private RealtimePlayer realtimePlayer;
+    private Synthetizer synthetizer;
+    private ArturiaKeyRegistry keyRegistry;
 
-    public MidiInputReceiver(final RealtimePlayer realtimePlayer) {
-        this.realtimePlayer = realtimePlayer;
+    public MidiInputReceiver(final Synthetizer synthetizer, final ArturiaKeyRegistry keyRegistry) {
+        this.synthetizer = synthetizer;
+        this.keyRegistry = keyRegistry;
     }
 
     @PostConstruct
@@ -52,19 +54,28 @@ public class MidiInputReceiver implements Receiver {
             ShortMessage shortMessage = (ShortMessage) message;
             final int value = shortMessage.getData1();
             final int volume = shortMessage.getData2();
-            final float volumeInPercent = (volume * 100) / 127;
+            final int command = shortMessage.getCommand();
+            final double volumeInPercent = (volume * 100.0) / 127.0;
 
 
-            switch (shortMessage.getCommand()) {
+            switch (command) {
                 case NOTE_ON:
                     final Note note = getNote(value);
-                    this.realtimePlayer.playNote(note, volumeInPercent);
+                    this.synthetizer.playNote(note, (float) volumeInPercent);
                     break;
                 case NOTE_OFF:
                     final Note noteToStop = getNote(value);
-                    this.realtimePlayer.stopNote(noteToStop);
+                    this.synthetizer.stopNote(noteToStop);
                     break;
                 case CONTROL_CHANGE:
+                    MidiKeyboardKey key = keyRegistry.get(value);
+                    if (key != null) {
+                        if (ArturiaKeyRegistry.ATTACK_1.equals(key)) {
+                            synthetizer.modifyAttack(volumeInPercent);
+                        } else if (ArturiaKeyRegistry.DECAY_1.equals(key)) {
+                            synthetizer.modifyRelease(volumeInPercent);
+                        }
+                    }
                     break;
                 default:
                     log.trace("unmanaged midi event received" + shortMessage.getCommand());

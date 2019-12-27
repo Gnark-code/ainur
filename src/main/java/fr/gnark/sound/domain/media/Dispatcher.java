@@ -1,0 +1,57 @@
+package fr.gnark.sound.domain.media;
+
+import fr.gnark.sound.domain.media.waveforms.EnvelopeADSR;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.sound.sampled.LineUnavailableException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+@Slf4j
+public class Dispatcher {
+    private final EnvelopeADSR envelopeADSR;
+    private final ExecutorService executorService;
+    // frequency processed / encoding running
+    private final Map<Double, RealtimeEncoder> encodingInProcess;
+    private final Deque<RealtimeEncoder> availableEncoders;
+
+    public Dispatcher(final int numberOfLines, final Signal signal, final EnvelopeADSR envelopeADSR) throws LineUnavailableException {
+        this.executorService = Executors.newFixedThreadPool(numberOfLines);
+        this.envelopeADSR = envelopeADSR;
+        encodingInProcess = new HashMap<>();
+        availableEncoders = new ArrayDeque<>();
+        for (int i = 0; i < numberOfLines; i++) {
+            availableEncoders.add(new RealtimeEncoder(signal, envelopeADSR));
+        }
+    }
+
+    public void dispatch(final Event event) {
+        if (!availableEncoders.isEmpty()) {
+            final RealtimeEncoder encoder = availableEncoders.removeFirst();
+            encodingInProcess.put(event.getFrequency(), encoder);
+            this.executorService.submit(() -> {
+                try {
+                    encoder.handleEvent(event);
+                } catch (final Exception e) {
+                    log.error("error caught when processing event", e);
+                }
+            });
+        } else {
+            log.warn("could not process Event due to lack of available encoders");
+        }
+    }
+
+    public void stop(final Double frequencyProcessed) {
+        final RealtimeEncoder encoder = encodingInProcess.get(frequencyProcessed);
+        if (encoder != null) {
+            encoder.stop();
+            availableEncoders.add(encoder);
+        } else {
+            log.warn("could not stop process for frequency " + frequencyProcessed);
+        }
+    }
+}

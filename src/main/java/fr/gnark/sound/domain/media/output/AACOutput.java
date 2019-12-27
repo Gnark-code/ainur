@@ -59,4 +59,9 @@ public class AACOutput implements Output {
     public void cleanup() {
 
     }
+
+    @Override
+    public double getFrameRate() {
+        return 0;
+    }
 }

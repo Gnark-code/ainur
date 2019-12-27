@@ -13,4 +13,6 @@ public interface Output {
 
     void cleanup();
 
+    double getFrameRate();
+
 }

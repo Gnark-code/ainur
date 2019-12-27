@@ -40,7 +40,7 @@ public class AudioFormatOutput implements Output {
 
 
     public void flush() {
-        writeCleanupBytes(1024);
+     //   writeCleanupBytes(1024);
         processData(getBuffer());
         newBuffer();
     }
@@ -134,6 +134,11 @@ public class AudioFormatOutput implements Output {
 
     @Override
     public void cleanup() {
-        writeCleanupBytes(64);
+        //   writeCleanupBytes(64);
+    }
+
+    @Override
+    public double getFrameRate() {
+        return FRAME_RATE;
     }
 }

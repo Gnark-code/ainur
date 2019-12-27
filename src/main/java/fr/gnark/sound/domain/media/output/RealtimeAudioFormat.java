@@ -66,12 +66,20 @@ public class RealtimeAudioFormat implements Output {
 
     @Override
     public byte[] getBuffer() {
-        return new byte[0];
+        return slidingWindow.window;
     }
 
     @Override
     public void cleanup() {
+        if (this.line.isOpen()) {
+            this.line.drain();
+            this.line.close();
+        }
+    }
 
+    @Override
+    public double getFrameRate() {
+        return FRAME_RATE;
     }
 
     public void flush() {
@@ -100,10 +108,6 @@ public class RealtimeAudioFormat implements Output {
     }
 
     public void clean() {
-        processData(writeCleanupBytes(64));
-        if (this.line.isOpen()) {
-            this.line.drain();
-            this.line.close();
-        }
+
     }
 }
