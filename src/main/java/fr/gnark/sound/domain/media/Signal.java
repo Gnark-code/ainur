@@ -77,4 +77,5 @@ public abstract class Signal {
     }
 
     protected abstract double innerComputeFormula(final double fundamentalFrequency, final double time);
+
 }

@@ -2,15 +2,12 @@ package fr.gnark.sound.domain.media.output;
 
 import fr.gnark.sound.domain.media.Output;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 
 @Component
 @Slf4j
@@ -49,17 +46,14 @@ public class AudioFormatOutput implements Output {
      * TODO : work on a less horrible way to add the WAV description bits
      */
     public byte[] toWavBuffer() throws IOException {
-        File out = File.createTempFile("wav", ".wav");
-        out.deleteOnExit();
         final byte[] data = getBuffer();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         AudioInputStream audioInputStream = new AudioInputStream(bais, format, data.length);
-        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, out);
+        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, baos);
         audioInputStream.close();
         newBuffer();
-        final byte[] wavOutput = IOUtils.toByteArray(new FileInputStream(out));
-        Files.delete(out.toPath());
-        return wavOutput;
+        return baos.toByteArray();
     }
 
     private void newBuffer() {

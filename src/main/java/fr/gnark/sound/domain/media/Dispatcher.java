@@ -1,6 +1,5 @@
 package fr.gnark.sound.domain.media;
 
-import fr.gnark.sound.domain.media.waveforms.EnvelopeADSR;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -13,19 +12,17 @@ import java.util.concurrent.Executors;
 
 @Slf4j
 public class Dispatcher {
-    private final EnvelopeADSR envelopeADSR;
     private final ExecutorService executorService;
     // frequency processed / encoding running
     private final Map<Double, RealtimeEncoder> encodingInProcess;
     private final Deque<RealtimeEncoder> availableEncoders;
 
-    public Dispatcher(final int numberOfLines, final Signal signal, final EnvelopeADSR envelopeADSR) throws LineUnavailableException {
+    public Dispatcher(final int numberOfLines, final Instrument instrument) throws LineUnavailableException {
         this.executorService = Executors.newFixedThreadPool(numberOfLines);
-        this.envelopeADSR = envelopeADSR;
         encodingInProcess = new HashMap<>();
         availableEncoders = new ArrayDeque<>();
         for (int i = 0; i < numberOfLines; i++) {
-            availableEncoders.add(new RealtimeEncoder(signal, envelopeADSR));
+            availableEncoders.add(new RealtimeEncoder(instrument));
         }
     }
 

@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class MidiKeyboardKey {
-    private String name;
+    private Keys name;
     private int value;
 }

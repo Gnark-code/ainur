@@ -2,8 +2,7 @@ package fr.gnark.sound.applications;
 
 import fr.gnark.sound.domain.media.Dispatcher;
 import fr.gnark.sound.domain.media.Event;
-import fr.gnark.sound.domain.media.waveforms.EnvelopeADSR;
-import fr.gnark.sound.domain.media.waveforms.SawtoothWaveWithSynthesis;
+import fr.gnark.sound.domain.media.Instrument;
 import fr.gnark.sound.domain.music.Note;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,17 +13,11 @@ import javax.sound.sampled.LineUnavailableException;
 @Slf4j
 public class Synthetizer {
     private final Dispatcher dispatcher;
-    private final EnvelopeADSR envelopeADSR;
+    private final Instrument instrument;
 
-    public Synthetizer() throws LineUnavailableException {
-        envelopeADSR = EnvelopeADSR.builder()
-                .attackInSeconds(0.02)
-                .decayInSeconds(0.01)
-                .sustainFactorinDbfs(-3.0)
-                .releaseInSeconds(0.05)
-                .build();
-        dispatcher = new Dispatcher(16, new SawtoothWaveWithSynthesis().addHarmonics(5), envelopeADSR);
-
+    public Synthetizer(final Instruments instruments) throws LineUnavailableException {
+        instrument = instruments.getProxy();
+        dispatcher = new Dispatcher(64, instrument);
     }
 
     public void playNote(final Note note, final float volume) {
@@ -36,10 +29,18 @@ public class Synthetizer {
     }
 
     public void modifyAttack(final double volumeInPercent) {
-        envelopeADSR.modifyAttack(volumeInPercent);
+        instrument.getEnvelope().modifyAttack(volumeInPercent);
     }
 
     public void modifyRelease(final double volumeInPercent) {
-        envelopeADSR.modifyRelease(volumeInPercent);
+        instrument.getEnvelope().modifyRelease(volumeInPercent);
+    }
+
+    public void modifyDecay(final double volumeInPercent) {
+        instrument.getEnvelope().modifyDecay(volumeInPercent);
+    }
+
+    public void modifySustain(final double volumeInPercent) {
+        instrument.getEnvelope().modifySustain(volumeInPercent);
     }
 }

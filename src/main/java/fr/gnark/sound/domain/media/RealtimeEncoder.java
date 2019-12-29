@@ -1,7 +1,6 @@
 package fr.gnark.sound.domain.media;
 
 import fr.gnark.sound.domain.media.output.RealtimeAudioFormat;
-import fr.gnark.sound.domain.media.waveforms.EnvelopeADSR;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -9,19 +8,13 @@ import javax.sound.sampled.LineUnavailableException;
 @Slf4j
 public class RealtimeEncoder {
     private final RealtimeAudioFormat output;
-    private final Signal signal;
     private boolean stop;
-    private final EnvelopeADSR envelope;
-    private final long throughput;
-    private final int frameSize;
     private final double delta;
+    private Instrument instrument;
 
-    public RealtimeEncoder(final Signal signal, final EnvelopeADSR envelopeADSR) throws LineUnavailableException {
+    public RealtimeEncoder(final Instrument instrument) throws LineUnavailableException {
         this.output = new RealtimeAudioFormat();
-        this.signal = signal;
-        this.envelope = envelopeADSR;
-        throughput = output.getThroughputInBytes();
-        frameSize = output.getFrameSize();
+        this.instrument = instrument;
         delta = 1 / (output.getFrameRate());
     }
 
@@ -33,12 +26,11 @@ public class RealtimeEncoder {
     private void playEventUntilStopped(final Event event) {
         double time = 0;
         while (!stop) {
-            double computed = signal.computeFormula(event.getFrequency(), time);
+            double computed = instrument.getSignal().computeFormula(event.getFrequency(), time);
             double amplitudeR = 0;
             double amplitudeL = 0;
 
-
-            final double amplitude = event.getAmplitude() * envelope.computeAmplitude(time);
+            final double amplitude = event.getAmplitude() * instrument.getEnvelope().computeAmplitude(time);
             amplitudeR += amplitude / 100;
             amplitudeL += amplitude / 100;
             //apply panning if necessary
@@ -60,16 +52,12 @@ public class RealtimeEncoder {
 
     private void releaseEvent(final Event event, final double time) {
         double copy = time;
-        // truncate to the nearest complete frame
-        int nbBytes = (int) (envelope.getReleaseInSeconds() * throughput);
-        // truncate to the nearest complete frame
-        nbBytes = nbBytes - (nbBytes % frameSize);
         double localtime = 0;
-        for (int sample = 0; sample < nbBytes; sample = sample + frameSize) {
+        while (localtime < instrument.getEnvelope().getReleaseInSeconds()) {
             double computed = 0;
             double amplitudeR = 0;
             double amplitudeL = 0;
-            final double amplitude = event.getAmplitude() * envelope.computeRelease(localtime);
+            final double amplitude = event.getAmplitude() * instrument.getEnvelope().computeRelease(localtime);
             amplitudeR += amplitude / 100;
             amplitudeL += amplitude / 100;
             //apply panning if necessary
@@ -77,7 +65,7 @@ public class RealtimeEncoder {
                 amplitudeR += amplitudeR * (event.getPanning() / 100);
                 amplitudeL -= amplitudeL * (event.getPanning() / 100);
             }
-            computed += signal.computeFormula(event.getFrequency(), copy);
+            computed += instrument.getSignal().computeFormula(event.getFrequency(), copy);
             output.storeData(amplitudeL * computed, amplitudeR * computed);
             copy += delta;
             localtime += delta;

@@ -1,37 +1,58 @@
 package fr.gnark.sound.port.midi.in;
 
+import fr.gnark.sound.applications.Instruments;
+import fr.gnark.sound.applications.Synthetizer;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.DoubleConsumer;
+
+import static fr.gnark.sound.port.midi.in.Keys.*;
 
 @Component
+@Slf4j
 public class ArturiaKeyRegistry {
-    public static final MidiKeyboardKey ATTACK_1 = build("ATTACK_1", 73);
-    public static final MidiKeyboardKey DECAY_1 = build("DECAY_1", 75);
-    public static final MidiKeyboardKey SUSTAIN_1 = build("SUSTAIN_1", 79);
-    public static final MidiKeyboardKey RELEASE_1 = build("RELEASE_1", 72);
-    public static final MidiKeyboardKey MASTER_VOLUME = build("MASTER_VOLUME", 85);
-    private final Map<Integer, MidiKeyboardKey> _map = new HashMap<>();
 
+    @Autowired
+    private Synthetizer synthetizer;
+    @Autowired
+    private Instruments instruments;
+    private final Map<Integer, Keys> _map = new HashMap<>();
+    private final Map<Keys, DoubleConsumer> routingToApps = new HashMap<>();
 
     @PostConstruct
     private void addItems() {
-        this._map.put(ATTACK_1.getValue(), ATTACK_1);
-        this._map.put(DECAY_1.getValue(), DECAY_1);
-        this._map.put(SUSTAIN_1.getValue(), SUSTAIN_1);
-        this._map.put(RELEASE_1.getValue(), RELEASE_1);
-        this._map.put(MASTER_VOLUME.getValue(), MASTER_VOLUME);
+        this.routingToApps.put(ATTACK_1, synthetizer::modifyAttack);
+        this.routingToApps.put(DECAY_1, synthetizer::modifyDecay);
+        this.routingToApps.put(SUSTAIN_1, synthetizer::modifySustain);
+        this.routingToApps.put(RELEASE_1, synthetizer::modifyRelease);
+        this.routingToApps.put(NEXT, instruments::nextInstrument);
+        this.routingToApps.put(PREVIOUS, instruments::previousInstrument);
+
+        this._map.put(73, ATTACK_1);
+        this._map.put(75, DECAY_1);
+        this._map.put(79, SUSTAIN_1);
+        this._map.put(72, RELEASE_1);
+        this._map.put(22, NEXT);
+        this._map.put(23, PREVIOUS);
+        ;
     }
 
-
-    private static MidiKeyboardKey build(final String name, final int value) {
-        return new MidiKeyboardKey(name, value);
-    }
-
-
-    public MidiKeyboardKey get(final int value) {
-        return _map.get(value);
+    public void triggerControlChange(final int keyValue, final double valueInPercent) {
+        final Keys key = this._map.get(keyValue);
+        if (key != null) {
+            DoubleConsumer synthFunction = this.routingToApps.get(key);
+            if (synthFunction != null) {
+                synthFunction.accept(valueInPercent);
+            } else {
+                log.warn("Synthetizer function for key" + key + " not routed");
+            }
+        } else {
+            log.warn("Key for value " + keyValue + " not found");
+        }
     }
 }

@@ -55,6 +55,7 @@ public class MidiInputReceiver implements Receiver {
             final int value = shortMessage.getData1();
             final int volume = shortMessage.getData2();
             final int command = shortMessage.getCommand();
+            final int channel = shortMessage.getChannel();
             final double volumeInPercent = (volume * 100.0) / 127.0;
 
 
@@ -68,14 +69,7 @@ public class MidiInputReceiver implements Receiver {
                     this.synthetizer.stopNote(noteToStop);
                     break;
                 case CONTROL_CHANGE:
-                    MidiKeyboardKey key = keyRegistry.get(value);
-                    if (key != null) {
-                        if (ArturiaKeyRegistry.ATTACK_1.equals(key)) {
-                            synthetizer.modifyAttack(volumeInPercent);
-                        } else if (ArturiaKeyRegistry.DECAY_1.equals(key)) {
-                            synthetizer.modifyRelease(volumeInPercent);
-                        }
-                    }
+                    keyRegistry.triggerControlChange(value, volumeInPercent);
                     break;
                 default:
                     log.trace("unmanaged midi event received" + shortMessage.getCommand());

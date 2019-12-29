@@ -5,7 +5,7 @@ public class DomainObject {
     protected void checkRange(final String fieldName, final Double value, final Double min, final Double max) {
         checkNotNull(fieldName, value);
         if (value < min || value > max) {
-            throw new DomainException(fieldName + " must be between " + min + " and " + max);
+            throw new DomainException(fieldName + " must be between " + min + " and " + max + " value read :" + value);
         }
     }
 

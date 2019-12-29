@@ -12,12 +12,15 @@ public class EnvelopeADSR extends DomainObject {
     private static final double MIN_GAIN = -50.0;
     private static final double MIN_ATTACK = 0.001;
     private static final double MAX_ATTACK = 8.0;
+    private static final double MIN_DECAY = MIN_ATTACK;
+    private static final double MAX_DECAY = MAX_ATTACK;
     private static final double MIN_RELEASE = 0.01;
     private static final double MAX_RELEASE = 16.0;
     private double attackInSeconds;
     private double decayInSeconds;
     private double sustainFactorInDbfs;
     private double sustainFactorInPercentage;
+    private double maxFactorForFaders;
     @Getter
     private double releaseInSeconds;
 
@@ -28,6 +31,12 @@ public class EnvelopeADSR extends DomainObject {
         setDecayInSeconds(decayInSeconds);
         setSustainFactorInDbfs(sustainFactorinDbfs);
         setReleaseInSeconds(releaseInSeconds);
+        //arbitrary factor for faders to be useable from ms values to seconds values
+        maxFactorForFaders = Math.exp(10);
+    }
+
+    public EnvelopeADSR copy() {
+        return new EnvelopeADSR(attackInSeconds, decayInSeconds, sustainFactorInDbfs, releaseInSeconds);
     }
 
     private void setAttackInSeconds(final Double attackInSeconds) {
@@ -81,12 +90,33 @@ public class EnvelopeADSR extends DomainObject {
     }
 
     public void modifyAttack(final double valueInPercent) {
-        this.attackInSeconds = MIN_ATTACK - MAX_ATTACK / (Math.log10(valueInPercent / 100));
-        log.info("setting attack to :" + attackInSeconds + "s");
+        setAttackInSeconds(faderFunction(valueInPercent, MIN_ATTACK, MAX_ATTACK));
+        log.trace("setting attack to :" + attackInSeconds + "s");
+    }
+
+
+    public void modifyDecay(final double valueInPercent) {
+        setDecayInSeconds(faderFunction(valueInPercent, MIN_DECAY, MAX_DECAY));
+        log.trace("setting decay to :" + decayInSeconds + "s");
+    }
+
+    public void modifySustain(final double valueInPercent) {
+        setSustainFactorInDbfs(MIN_GAIN - (MIN_GAIN * valueInPercent) / 100);
+        log.trace("setting sustain to :" + sustainFactorInDbfs + "dB");
     }
 
     public void modifyRelease(final double valueInPercent) {
-        this.releaseInSeconds = MIN_RELEASE - MIN_RELEASE / (Math.log10(valueInPercent / 100));
-        log.info("setting release to :" + releaseInSeconds + "s");
+        setReleaseInSeconds(faderFunction(valueInPercent, MIN_RELEASE, MAX_RELEASE));
+        log.trace("setting release to :" + releaseInSeconds + "s");
+    }
+
+    private double faderFunction(final double valueInPercent, final double min, final double max) {
+        if (valueInPercent == 100.0) {
+            return max;
+        }
+        if (valueInPercent == 0.0) {
+            return min;
+        }
+        return (Math.exp(valueInPercent / 10) * max) / maxFactorForFaders + min;
     }
 }
