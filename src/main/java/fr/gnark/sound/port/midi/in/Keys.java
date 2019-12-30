@@ -7,6 +7,7 @@ public enum Keys {
     RELEASE_1,
     NEXT,
     PREVIOUS,
+    PARAM_1,
     MASTER_VOLUME;
 }
 

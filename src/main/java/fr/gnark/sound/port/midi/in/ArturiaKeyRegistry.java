@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.DoubleConsumer;
@@ -22,7 +23,7 @@ public class ArturiaKeyRegistry {
     @Autowired
     private Instruments instruments;
     private final Map<Integer, Keys> _map = new HashMap<>();
-    private final Map<Keys, DoubleConsumer> routingToApps = new HashMap<>();
+    private final Map<Keys, DoubleConsumer> routingToApps = new EnumMap<>(Keys.class);
 
     @PostConstruct
     private void addItems() {
@@ -32,14 +33,15 @@ public class ArturiaKeyRegistry {
         this.routingToApps.put(RELEASE_1, synthetizer::modifyRelease);
         this.routingToApps.put(NEXT, instruments::nextInstrument);
         this.routingToApps.put(PREVIOUS, instruments::previousInstrument);
+        this.routingToApps.put(PARAM_1, instruments::changeParam1);
 
         this._map.put(73, ATTACK_1);
         this._map.put(75, DECAY_1);
         this._map.put(79, SUSTAIN_1);
         this._map.put(72, RELEASE_1);
         this._map.put(22, NEXT);
+        this._map.put(93, PARAM_1);
         this._map.put(23, PREVIOUS);
-        ;
     }
 
     public void triggerControlChange(final int keyValue, final double valueInPercent) {

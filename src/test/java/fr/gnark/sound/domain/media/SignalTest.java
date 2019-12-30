@@ -1,11 +1,13 @@
 package fr.gnark.sound.domain.media;
 
 import fr.gnark.sound.adapter.ChordProgressionToEvents;
+import fr.gnark.sound.applications.Instruments;
 import fr.gnark.sound.domain.media.output.AudioFormatOutput;
 import fr.gnark.sound.domain.media.waveforms.EnvelopeADSR;
 import fr.gnark.sound.domain.media.waveforms.SineWave;
 import fr.gnark.sound.domain.music.*;
 import graphql.Assert;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
@@ -19,12 +21,20 @@ import java.util.List;
 /**
  * Class used to debug Signal processing
  */
-//@Disabled("Useful to debug waveforms")
+@Disabled("Useful to debug waveforms")
 class SignalTest {
-    private static final int TICKS_BY_WHOLE_NOTE = 128;
-    private static final ChordProgressionToEvents CHORD_PROGRESSION_TO_EVENTS = new ChordProgressionToEvents(TICKS_BY_WHOLE_NOTE);
+    private Instruments instruments = new Instruments();
     private static int BPM = 500;
+    private static final int TICKS_BY_WHOLE_NOTE = 128;
     final double definitionInMs = 60000.0 / (BPM * (TICKS_BY_WHOLE_NOTE / 4.0));
+    private final Player player;
+
+    public SignalTest() throws LineUnavailableException {
+        player = new Player(new Dispatcher(64, instruments.getProxy()), definitionInMs);
+    }
+
+    private static final ChordProgressionToEvents CHORD_PROGRESSION_TO_EVENTS = new ChordProgressionToEvents(TICKS_BY_WHOLE_NOTE);
+
 
     @Test
     void computeBuffer() throws InterruptedException {
@@ -130,7 +140,7 @@ class SignalTest {
                 .rythmicPatterns(rythmicPatterns)
                 .build();
         Assert.assertNotNull(chordProgression);
-        Player player = new Player(encoder);
+
         //index in the resolution
         CHORD_PROGRESSION_TO_EVENTS.map(chordProgression)
                 .forEach(player::postEvents);

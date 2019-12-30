@@ -1,5 +1,6 @@
 package fr.gnark.sound.domain.media;
 
+import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,16 +9,19 @@ import lombok.Getter;
  */
 
 @Getter
-public class Harmonic {
+public class Harmonic extends DomainObject {
     private int index;
     private Double amplitude;
     private Double phase;
+    private Double variationFromFundamentalInCents;
 
     @Builder
-    public Harmonic(final int index, final Double amplitude, final Double phase) {
+    public Harmonic(final int index, final Double amplitude, final Double phase,
+                    final Double variationFromFundamentalInCents) {
         this.index = index;
         this.amplitude = amplitude != null ? amplitude : 1;
         this.phase = phase != null ? phase : 0;
+        this.variationFromFundamentalInCents = variationFromFundamentalInCents != null ? variationFromFundamentalInCents : 0;
     }
 
     public boolean isOdd() {
@@ -26,5 +30,9 @@ public class Harmonic {
 
     public int getRank() {
         return index + 1;
+    }
+
+    public double getFrequencyFromVariation(final double fundamental) {
+        return fundamental * Math.pow(2, variationFromFundamentalInCents / 1200);
     }
 }

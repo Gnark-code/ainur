@@ -32,7 +32,7 @@ public class ScaleAGogo {
                     new SawtoothWave()
             );
         } catch (LineUnavailableException e) {
-            throw new IllegalArgumentException("something bad happened");
+            throw new IllegalArgumentException("something bad happened", e);
         }
         for (final Events events : ListOfEvents) {
             encoder.handleEvents(events);

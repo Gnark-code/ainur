@@ -23,6 +23,7 @@ public class Dispatcher {
         availableEncoders = new ArrayDeque<>();
         for (int i = 0; i < numberOfLines; i++) {
             availableEncoders.add(new RealtimeEncoder(instrument));
+
         }
     }
 
@@ -37,6 +38,7 @@ public class Dispatcher {
                     log.error("error caught when processing event", e);
                 }
             });
+
         } else {
             log.warn("could not process Event due to lack of available encoders");
         }

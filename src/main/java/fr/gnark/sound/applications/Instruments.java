@@ -7,7 +7,6 @@ import fr.gnark.sound.domain.media.waveforms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,33 +17,59 @@ public class Instruments {
     private InstrumentProxy proxy;
     private int index = 0;
 
-    @PostConstruct
-    private void init() {
+    public Instruments() {
         EnvelopeADSR envelopeADSR = EnvelopeADSR.builder()
                 .attackInSeconds(0.02)
                 .decayInSeconds(0.01)
                 .sustainFactorinDbfs(-3.0)
                 .releaseInSeconds(0.05)
                 .build();
+        _instruments.add(new InstrumentImpl("Triangle",
+                new TriangleWave(),
+                envelopeADSR.copy()));
+        _instruments.add(new InstrumentImpl("Sine",
+                new SineWave().addHarmonics(1),
+                envelopeADSR.copy()));
         _instruments.add(new InstrumentImpl("Imperfect sawtooth",
                 new SawtoothWaveWithSynthesis().addHarmonics(5),
                 envelopeADSR.copy()));
         _instruments.add(new InstrumentImpl("Square",
-                new SquareWaveWithSynthesis().addHarmonics(5),
+                new SquareWave(),
                 envelopeADSR.copy()));
         _instruments.add(new InstrumentImpl("Imperfect Square",
                 new SquareWaveWithSynthesis().addHarmonics(10),
                 envelopeADSR.copy()));
-        _instruments.add(new InstrumentImpl("Triangle",
-                new TriangleWave(),
-                envelopeADSR.copy()));
+
         _instruments.add(new InstrumentImpl("sawtooth",
                 new SawtoothWave(),
                 envelopeADSR.copy()));
         _instruments.add(new InstrumentImpl("alternative sawtooth",
                 new SawtoothAltWave(),
                 envelopeADSR.copy()));
+        _instruments.add(new InstrumentImpl("Flute",
+                new Flute(),
+                EnvelopeADSR.builder()
+                        .attackInSeconds(0.2)
+                        .decayInSeconds(0.1)
+                        .sustainFactorinDbfs(-1.0)
+                        .releaseInSeconds(0.05)
+                        .build()));
+        _instruments.add(getHarpsichord());
         proxy = new InstrumentProxy(_instruments.get(0));
+    }
+
+    private InstrumentImpl getHarpsichord() {
+        final Harpsichord signal = new Harpsichord();
+        InstrumentImpl harpsichord = new InstrumentImpl("Harpsichord",
+                signal,
+                EnvelopeADSR.builder()
+                        .attackInSeconds(0.02)
+                        .decayInSeconds(1.5)
+                        .sustainFactorinDbfs(-9.0)
+                        .releaseInSeconds(0.3)
+                        .build());
+        harpsichord.setParam1(signal::setPluckingRatio);
+        return harpsichord;
     }
 
     public Instrument getProxy() {
@@ -77,5 +102,9 @@ public class Instruments {
             log.info("now selecting " + instrument.getIdentifier());
             proxy.change(instrument);
         }
+    }
+
+    public void changeParam1(final double v) {
+        proxy.changeParam1(v);
     }
 }

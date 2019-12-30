@@ -21,4 +21,14 @@ public class DomainObject {
             throw new DomainException(fieldName + " must not be null");
         }
     }
+
+    protected double getPercentage(final double valueInPercent, final double min, final double max) {
+        checkRange("valueInPercent", valueInPercent, 0.0, 100.0);
+        if (valueInPercent == 100) {
+            return max;
+        } else if (valueInPercent == 0) {
+            return min;
+        }
+        return (valueInPercent * max) / 100;
+    }
 }

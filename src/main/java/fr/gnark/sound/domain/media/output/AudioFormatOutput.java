@@ -37,14 +37,9 @@ public class AudioFormatOutput implements Output {
 
 
     public void flush() {
-     //   writeCleanupBytes(1024);
         processData(getBuffer());
         newBuffer();
     }
-
-    /**
-     * TODO : work on a less horrible way to add the WAV description bits
-     */
     public byte[] toWavBuffer() throws IOException {
         final byte[] data = getBuffer();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -128,7 +123,6 @@ public class AudioFormatOutput implements Output {
 
     @Override
     public void cleanup() {
-        //   writeCleanupBytes(64);
     }
 
     @Override

@@ -73,8 +73,8 @@ public class RealtimeAudioFormat implements Output {
     public void cleanup() {
         if (this.line.isOpen()) {
             this.line.drain();
-            this.line.close();
         }
+        this.line.close();
     }
 
     @Override
@@ -85,29 +85,5 @@ public class RealtimeAudioFormat implements Output {
     public void flush() {
     }
 
-    /**
-     * smoothly write the data back to 0
-     */
-    private byte[] writeCleanupBytes(final int sizeOfCleanup) {
-        final byte[] lastWrittenBytes = slidingWindow.lastWrittenBytes(4);
-        final byte[] result = new byte[sizeOfCleanup * FRAME_SIZE];
-        int lastLevelLeft = (lastWrittenBytes[2] << 8) + (lastWrittenBytes[3] & 0xff);
-        int lastLevelRight = (lastWrittenBytes[0] << 8) + (lastWrittenBytes[1] & 0xff);
 
-        int deltaLeft = lastLevelLeft / sizeOfCleanup;
-        int deltaRight = lastLevelRight / sizeOfCleanup;
-        for (int i = 0; i < sizeOfCleanup * FRAME_SIZE; i = i + FRAME_SIZE) {
-            lastLevelLeft -= deltaLeft;
-            lastLevelRight -= deltaRight;
-            result[i] = (byte) (lastLevelLeft);
-            result[i + 1] = (byte) (lastLevelLeft >>> 8);
-            result[i + 2] = (byte) (lastLevelRight);
-            result[i + 3] = (byte) (lastLevelRight >>> 8);
-        }
-        return result;
-    }
-
-    public void clean() {
-
-    }
 }
