@@ -3,12 +3,12 @@ package fr.gnark.sound.domain.media;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.LineUnavailableException;
-import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 
 @Slf4j
 public class Dispatcher {
@@ -19,11 +19,10 @@ public class Dispatcher {
 
     public Dispatcher(final int numberOfLines, final Instrument instrument) throws LineUnavailableException {
         this.executorService = Executors.newFixedThreadPool(numberOfLines);
-        encodingInProcess = new HashMap<>();
-        availableEncoders = new ArrayDeque<>();
+        encodingInProcess = new ConcurrentHashMap<>();
+        availableEncoders = new LinkedBlockingDeque<>();
         for (int i = 0; i < numberOfLines; i++) {
             availableEncoders.add(new RealtimeEncoder(instrument));
-
         }
     }
 
@@ -52,5 +51,6 @@ public class Dispatcher {
         } else {
             log.warn("could not stop process for frequency " + frequencyProcessed);
         }
+
     }
 }

@@ -1,6 +1,6 @@
-package fr.gnark.sound.domain.media.waveforms;
+package fr.gnark.sound.domain.physics.waveforms;
 
-import fr.gnark.sound.domain.media.Signal;
+import fr.gnark.sound.domain.physics.Signal;
 
 public class SawtoothWave extends Signal {
     @Override

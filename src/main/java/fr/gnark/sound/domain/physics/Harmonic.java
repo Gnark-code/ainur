@@ -1,4 +1,4 @@
-package fr.gnark.sound.domain.media;
+package fr.gnark.sound.domain.physics;
 
 import fr.gnark.sound.domain.DomainObject;
 import lombok.Builder;
@@ -34,5 +34,9 @@ public class Harmonic extends DomainObject {
 
     public double getFrequencyFromVariation(final double fundamental) {
         return fundamental * Math.pow(2, variationFromFundamentalInCents / 1200);
+    }
+
+    public double getPhaseInRadians() {
+        return phase * (Math.PI / 180);
     }
 }

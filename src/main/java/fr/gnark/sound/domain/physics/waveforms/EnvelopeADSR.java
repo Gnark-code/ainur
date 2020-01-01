@@ -1,4 +1,4 @@
-package fr.gnark.sound.domain.media.waveforms;
+package fr.gnark.sound.domain.physics.waveforms;
 
 
 import fr.gnark.sound.domain.DomainObject;
@@ -54,7 +54,6 @@ public class EnvelopeADSR extends DomainObject {
         checkRange("sustainFactor", sustainFactorInDbfs, MIN_GAIN, 0.0);
         this.sustainFactorInDbfs = sustainFactorInDbfs;
         this.sustainFactorInPercentage = Math.pow(10, this.sustainFactorInDbfs / 20.0);
-        ;
     }
 
     private void setReleaseInSeconds(final Double releaseInSeconds) {

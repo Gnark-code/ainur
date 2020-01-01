@@ -1,17 +1,18 @@
-package fr.gnark.sound.domain.media.waveforms;
+package fr.gnark.sound.domain.physics.waveforms;
 
-import fr.gnark.sound.domain.media.Harmonic;
-import fr.gnark.sound.domain.media.Signal;
+import fr.gnark.sound.domain.physics.Harmonic;
+import fr.gnark.sound.domain.physics.Signal;
 
 public class SquareWaveWithSynthesis extends Signal {
     @Override
     protected double innerComputeFormula(final double fundamentalFrequency, final double time) {
-        double twoPiF = 2 * Math.PI * fundamentalFrequency;
+
         double result = 0;
         for (final Harmonic harmonic : harmonics) {
+            double twoPiF = 2 * Math.PI * harmonic.getFrequencyFromVariation(fundamentalFrequency);
             int k = harmonic.getRank();
             if (harmonic.isOdd()) {
-                result += (FOUR_ON_PI * (Math.sin(k * twoPiF * time) / k));
+                result += (FOUR_ON_PI * (Math.sin(twoPiF * time) / k));
             }
         }
         result = result / 2;

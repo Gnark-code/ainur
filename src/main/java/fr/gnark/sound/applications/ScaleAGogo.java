@@ -1,17 +1,15 @@
 package fr.gnark.sound.applications;
 
 import fr.gnark.sound.adapter.ScaleToEvents;
-import fr.gnark.sound.domain.media.Encoder;
 import fr.gnark.sound.domain.media.Events;
-import fr.gnark.sound.domain.media.output.AudioFormatOutput;
-import fr.gnark.sound.domain.media.waveforms.SawtoothWave;
+import fr.gnark.sound.domain.media.WavEncoder;
 import fr.gnark.sound.domain.music.BaseNote;
 import fr.gnark.sound.domain.music.Mode;
 import fr.gnark.sound.domain.music.Note;
 import fr.gnark.sound.domain.music.Scale;
+import fr.gnark.sound.domain.physics.waveforms.SawtoothWave;
 import org.springframework.stereotype.Component;
 
-import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,18 +24,14 @@ public class ScaleAGogo {
         final List<Events> ListOfEvents = previewScaleToEvents.map(new Scale(mode.getSemitones(), Note.builder().octave(2).baseNote(BaseNote.C).build()));
 
         final double definitionInMs = 60000.0 / (PREVIEW_BPM * (TICKS_BY_WHOLE_NOTE / 4.0));
-        Encoder encoder = null;
-        try {
-            encoder = new Encoder("PREVIEW ENCODER", definitionInMs, new AudioFormatOutput(),
-                    new SawtoothWave()
-            );
-        } catch (LineUnavailableException e) {
-            throw new IllegalArgumentException("something bad happened", e);
-        }
+        WavEncoder wavEncoder = new WavEncoder("PREVIEW ENCODER", definitionInMs,
+                new SawtoothWave()
+        );
+
         for (final Events events : ListOfEvents) {
-            encoder.handleEvents(events);
+            wavEncoder.handleEvents(events);
         }
-        return encoder.getEncodedData();
+        return wavEncoder.toWavBuffer();
 
     }
 }

@@ -1,6 +1,6 @@
 package fr.gnark.sound.applications;
 
-import fr.gnark.sound.domain.media.output.AudioFormatOutput;
+import fr.gnark.sound.domain.media.WavEncoder;
 import fr.gnark.sound.domain.music.Mode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,6 @@ class ScaleAGogoTest {
     @Test
     void getPreviewData() throws IOException {
         final byte[] data = scaleAGogo.getPreviewData(Mode.DOUBLE_HARMONIC_MAJOR);
-        Assertions.assertTrue(data.length > 0 && data.length < AudioFormatOutput.MAX_BUFFER_SIZE);
+        Assertions.assertTrue(data.length > 0 && data.length < WavEncoder.MAX_BUFFER_SIZE);
     }
 }

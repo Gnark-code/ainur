@@ -3,7 +3,7 @@ package fr.gnark.sound.applications;
 import fr.gnark.sound.domain.media.Instrument;
 import fr.gnark.sound.domain.media.InstrumentImpl;
 import fr.gnark.sound.domain.media.InstrumentProxy;
-import fr.gnark.sound.domain.media.waveforms.*;
+import fr.gnark.sound.domain.physics.waveforms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class Instruments {
                 new SquareWave(),
                 envelopeADSR.copy()));
         _instruments.add(new InstrumentImpl("Imperfect Square",
-                new SquareWaveWithSynthesis().addHarmonics(10),
+                new SquareWaveWithSynthesis().addOvertones(31),
                 envelopeADSR.copy()));
 
         _instruments.add(new InstrumentImpl("sawtooth",
@@ -46,13 +46,21 @@ public class Instruments {
         _instruments.add(new InstrumentImpl("alternative sawtooth",
                 new SawtoothAltWave(),
                 envelopeADSR.copy()));
+        _instruments.add(new InstrumentImpl("Warp",
+                new Warp(),
+                EnvelopeADSR.builder()
+                        .attackInSeconds(0.05)
+                        .decayInSeconds(0.5)
+                        .sustainFactorinDbfs(-3.0)
+                        .releaseInSeconds(4.0)
+                        .build()));
         _instruments.add(new InstrumentImpl("Flute",
                 new Flute(),
                 EnvelopeADSR.builder()
-                        .attackInSeconds(0.2)
-                        .decayInSeconds(0.1)
-                        .sustainFactorinDbfs(-1.0)
-                        .releaseInSeconds(0.05)
+                        .attackInSeconds(0.05)
+                        .decayInSeconds(0.5)
+                        .sustainFactorinDbfs(-3.0)
+                        .releaseInSeconds(0.3)
                         .build()));
         _instruments.add(getHarpsichord());
         proxy = new InstrumentProxy(_instruments.get(0));

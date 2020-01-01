@@ -1,9 +1,10 @@
-package fr.gnark.sound.domain.media;
+package fr.gnark.sound.domain.physics;
 
 import fr.gnark.sound.domain.DomainObject;
-import fr.gnark.sound.domain.media.output.AudioFormatOutput;
 
 import java.util.*;
+
+import static fr.gnark.sound.domain.media.output.WavConstants.SAMPLE_RATE;
 
 public abstract class Signal extends DomainObject {
     protected static final double ONE_ON_PI = 1 / Math.PI;
@@ -71,10 +72,10 @@ public abstract class Signal extends DomainObject {
     public Signal initBufferIfNecessary(final double fundamentalFrequency) {
         List<Double> bufferedValues = _buffer.get(fundamentalFrequency);
         if (bufferedValues == null) {
-            bufferedValues = new ArrayList<>((int) (AudioFormatOutput.SAMPLE_RATE / fundamentalFrequency));
-            int maxSize = (int) (AudioFormatOutput.SAMPLE_RATE * 2 / fundamentalFrequency);
+            bufferedValues = new ArrayList<>((int) (SAMPLE_RATE / fundamentalFrequency));
+            int maxSize = (int) (SAMPLE_RATE * 2 / fundamentalFrequency);
             for (int i = 0; i < maxSize; i++) {
-                bufferedValues.add(innerComputeFormula(fundamentalFrequency, i / AudioFormatOutput.SAMPLE_RATE));
+                bufferedValues.add(innerComputeFormula(fundamentalFrequency, i / SAMPLE_RATE));
             }
             _buffer.put(fundamentalFrequency, bufferedValues);
         }
@@ -85,7 +86,7 @@ public abstract class Signal extends DomainObject {
         final double result;//get from buffer
         if (time >= 0) {
             double timeInCurrentPeriod = time % (1 / fundamentalFrequency);
-            final int index = (int) (timeInCurrentPeriod * AudioFormatOutput.SAMPLE_RATE);
+            final int index = (int) (timeInCurrentPeriod * SAMPLE_RATE);
             if (index < bufferedValues.size()) {
                 result = bufferedValues.get(index);
             } else //rounding error
