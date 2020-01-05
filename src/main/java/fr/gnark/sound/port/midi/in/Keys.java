@@ -8,6 +8,9 @@ public enum Keys {
     NEXT,
     PREVIOUS,
     PARAM_1,
+    PARAM_2,
+    PARAM_3,
+    PARAM_4,
     MASTER_VOLUME;
 }
 

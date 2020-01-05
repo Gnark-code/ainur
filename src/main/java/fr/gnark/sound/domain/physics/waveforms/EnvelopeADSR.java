@@ -84,10 +84,6 @@ public class EnvelopeADSR extends DomainObject {
         return Math.pow(10, gainInDbfs / 20);
     }
 
-    public boolean mustComputeRelease(final double time) {
-        return time <= releaseInSeconds;
-    }
-
     public void modifyAttack(final double valueInPercent) {
         setAttackInSeconds(faderFunction(valueInPercent, MIN_ATTACK, MAX_ATTACK));
         log.trace("setting attack to :" + attackInSeconds + "s");

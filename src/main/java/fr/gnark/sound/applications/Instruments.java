@@ -54,30 +54,41 @@ public class Instruments {
                         .sustainFactorinDbfs(-3.0)
                         .releaseInSeconds(4.0)
                         .build()));
-        _instruments.add(new InstrumentImpl("Flute",
-                new Flute(),
-                EnvelopeADSR.builder()
-                        .attackInSeconds(0.05)
-                        .decayInSeconds(0.5)
-                        .sustainFactorinDbfs(-3.0)
-                        .releaseInSeconds(0.3)
-                        .build()));
+        _instruments.add(getFlute());
         _instruments.add(getHarpsichord());
         proxy = new InstrumentProxy(_instruments.get(0));
     }
 
     private InstrumentImpl getHarpsichord() {
-        final Harpsichord signal = new Harpsichord();
+        final double attackInSeconds = 0.02;
+        final Harpsichord signal = new Harpsichord(attackInSeconds);
         InstrumentImpl harpsichord = new InstrumentImpl("Harpsichord",
                 signal,
                 EnvelopeADSR.builder()
-                        .attackInSeconds(0.02)
+                        .attackInSeconds(attackInSeconds)
                         .decayInSeconds(1.5)
                         .sustainFactorinDbfs(-9.0)
                         .releaseInSeconds(0.3)
                         .build());
         harpsichord.setParam1(signal::setPluckingRatio);
+        harpsichord.setParam2(signal::setOctaveRatio);
         return harpsichord;
+    }
+
+    private InstrumentImpl getFlute() {
+        final Flute signal = new Flute();
+        InstrumentImpl flute = new InstrumentImpl("Flute",
+                signal,
+                EnvelopeADSR.builder()
+                        .attackInSeconds(0.05)
+                        .decayInSeconds(0.5)
+                        .sustainFactorinDbfs(-3.0)
+                        .releaseInSeconds(0.3)
+                        .build());
+
+        flute.setParam1(signal::setVibratoInCents);
+        flute.setParam2(signal::setAirblow);
+        return flute;
     }
 
     public Instrument getProxy() {
@@ -114,5 +125,9 @@ public class Instruments {
 
     public void changeParam1(final double v) {
         proxy.changeParam1(v);
+    }
+
+    public void changeParam2(final double v) {
+        proxy.changeParam2(v);
     }
 }

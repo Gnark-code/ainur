@@ -103,7 +103,7 @@ public class WavEncoder {
         final byte[] data = getBuffer();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        AudioInputStream audioInputStream = new AudioInputStream(bais, AUDIO_FORMAT, data.length);
+        AudioInputStream audioInputStream = new AudioInputStream(bais, AUDIO_FORMAT_STEREO, data.length);
         AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, baos);
         audioInputStream.close();
         newBuffer();

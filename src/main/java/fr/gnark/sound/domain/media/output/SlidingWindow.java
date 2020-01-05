@@ -41,12 +41,6 @@ public class SlidingWindow {
         this.flushOutput = flushOutput;
     }
 
-    public byte[] lastWrittenBytes(final int i) {
-        final byte[] result = new byte[i];
-        System.arraycopy(_buffer, writeIndex - i, result, 0, i);
-        return result;
-    }
-
     private byte[] flush() {
         System.arraycopy(_buffer, windowIndex, window, 0, windowsize * frameSize);
         windowIndex = windowIndex + windowsize * frameSize;

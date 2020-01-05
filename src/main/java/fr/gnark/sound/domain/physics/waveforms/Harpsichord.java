@@ -12,16 +12,31 @@ import static java.lang.Math.*;
  */
 @Slf4j
 public class Harpsichord extends Signal {
+    private final double attackInSeconds;
     private static final double MAX_PLUCKING_RATIO = 0.5;
     private static final double MIN_PLUCKING_RATIO = 0.01;
+    private static final double MAX_OCTAVE_RATIO = 1.0;
+    private static final double MIN_OCTAVE_RATIO = 0.0;
     private double pluckingRatio = 0.3;
+    private double octaveRatio = 0.40;
 
-    public Harpsichord() {
+    public Harpsichord(final double attackInSeconds) {
+        this.attackInSeconds = attackInSeconds;
         this.addOvertones(31);
     }
 
     @Override
     protected double innerComputeFormula(final double fundamentalFrequency, final double time) {
+        final double valueForFrequency = compute(fundamentalFrequency, time);
+        final double valueForOctave = compute(fundamentalFrequency / 2, time);
+        return (1.0 - octaveRatio) * valueForFrequency + octaveRatio * valueForOctave;
+    }
+
+    private double compute(final double fundamentalFrequency, final double time) {
+        if (time < attackInSeconds) {
+            //pure square wave
+            return Math.signum(Math.sin(2 * Math.PI * fundamentalFrequency * time));
+        }
         double result = 0;
         for (final Harmonic harmonic : harmonics) {
             double twoPiF = 2 * Math.PI * harmonic.getFrequencyFromVariation(fundamentalFrequency);
@@ -36,5 +51,8 @@ public class Harpsichord extends Signal {
         log.info("setting plucking ratio to :" + pluckingRatio);
     }
 
-
+    public void setOctaveRatio(final double valueInPercent) {
+        this.octaveRatio = getPercentage(valueInPercent, MIN_OCTAVE_RATIO, MAX_OCTAVE_RATIO);
+        log.info("setting octave ratio to :" + octaveRatio);
+    }
 }

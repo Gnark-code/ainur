@@ -2,18 +2,24 @@ package fr.gnark.sound.domain.physics.waveforms;
 
 import fr.gnark.sound.domain.physics.Harmonic;
 import fr.gnark.sound.domain.physics.Signal;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
 import java.util.Random;
 
 import static java.lang.Math.sin;
 
+@Slf4j
 public class Flute extends Signal {
 
+    private static final double MIN_VIBRATO_IN_CENTS = 0.0;
+    private static final double MAX_VIBRATO_IN_CENTS = 100.0;
+    private static final double MIN_AIRBLOW = 0.0;
+    private static final double MAX_AIRBLOW = 0.1;
     final Random secureRandom = new SecureRandom();
 
     private double airblowFactor = 0.003;
-    private double vibratoVariationsInCents = 5.0;
+    private double vibratoInCents = 10.0;
 
     public Flute() {
         final double totalAmplitude = 1522.4 + 611.3 + 412.6 + 195.7 + 66.1;
@@ -63,8 +69,8 @@ public class Flute extends Signal {
     }
 
     private double vibrato(final double fundamentalFrequency, final double time) {
-        final double deltaInHertz = fundamentalFrequency * Math.pow(2, vibratoVariationsInCents / 1200) - fundamentalFrequency;
-        return fundamentalFrequency + deltaInHertz * sin(2 * Math.PI * time);
+        final double deltaInHertz = fundamentalFrequency * Math.pow(2, vibratoInCents / 1200) - fundamentalFrequency;
+        return fundamentalFrequency + deltaInHertz * Math.signum(Math.sin(2 * Math.PI * deltaInHertz * time));
     }
 
     private double airblow() {
@@ -72,4 +78,13 @@ public class Flute extends Signal {
         return airblowFactor * secureRandom.nextGaussian();
     }
 
+    public void setVibratoInCents(final Double valueInPercent) {
+        this.vibratoInCents = getPercentage(valueInPercent, MIN_VIBRATO_IN_CENTS, MAX_VIBRATO_IN_CENTS);
+        log.info("setting vibrato in cents to :" + vibratoInCents);
+    }
+
+    public void setAirblow(final Double valueInPercent) {
+        this.airblowFactor = getPercentage(valueInPercent, MIN_AIRBLOW, MAX_AIRBLOW);
+        log.info("setting airblow to :" + airblowFactor);
+    }
 }

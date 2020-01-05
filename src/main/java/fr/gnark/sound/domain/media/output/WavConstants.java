@@ -11,6 +11,8 @@ public class WavConstants {
     public static final double FRAME_RATE = SAMPLE_RATE;
     public static final boolean BIG_ENDIAN = false;
     public static final boolean SIGNED = true;
-    public static final AudioFormat AUDIO_FORMAT = new AudioFormat((float) SAMPLE_RATE, SAMPLE_SIZE_IN_BITS, CHANNELS, SIGNED,
+    public static final AudioFormat AUDIO_FORMAT_STEREO = new AudioFormat((float) SAMPLE_RATE, SAMPLE_SIZE_IN_BITS, CHANNELS, SIGNED,
+            BIG_ENDIAN);
+    public static final AudioFormat AUDIO_FORMAT_MONO = new AudioFormat((float) SAMPLE_RATE, SAMPLE_SIZE_IN_BITS, 1, SIGNED,
             BIG_ENDIAN);
 }

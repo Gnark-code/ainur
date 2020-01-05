@@ -7,4 +7,5 @@ public interface Instrument {
     Signal getSignal();
 
     EnvelopeADSR getEnvelope();
+
 }

@@ -34,6 +34,7 @@ public class ArturiaKeyRegistry {
         this.routingToApps.put(NEXT, instruments::nextInstrument);
         this.routingToApps.put(PREVIOUS, instruments::previousInstrument);
         this.routingToApps.put(PARAM_1, instruments::changeParam1);
+        this.routingToApps.put(PARAM_2, instruments::changeParam2);
 
         this._map.put(73, ATTACK_1);
         this._map.put(75, DECAY_1);
@@ -41,6 +42,9 @@ public class ArturiaKeyRegistry {
         this._map.put(72, RELEASE_1);
         this._map.put(22, NEXT);
         this._map.put(93, PARAM_1);
+        this._map.put(18, PARAM_2);
+        this._map.put(19, PARAM_3);
+        this._map.put(16, PARAM_4);
         this._map.put(23, PREVIOUS);
     }
 
