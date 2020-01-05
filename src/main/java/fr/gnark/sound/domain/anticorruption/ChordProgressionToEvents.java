@@ -1,4 +1,4 @@
-package fr.gnark.sound.adapter;
+package fr.gnark.sound.domain.anticorruption;
 
 import fr.gnark.sound.domain.media.Event;
 import fr.gnark.sound.domain.media.Events;
@@ -118,10 +118,10 @@ public class ChordProgressionToEvents {
     }
 
     /**
-     *      4  ----
-     *    3  ------
-     *  3 ---let---
-     * 1 -----ring-
+     *      4  ------
+     *    3  --------
+     *  3 ---let-----
+     * 1 -----ring---
      * <- duration ->
      */
     private long mapRake(final List<Events> result, long startTime, final PlayableChord chord, final long duration, final List<Event> events) {

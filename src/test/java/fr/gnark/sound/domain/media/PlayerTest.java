@@ -1,8 +1,8 @@
 package fr.gnark.sound.domain.media;
 
-import fr.gnark.sound.adapter.ChordProgressionToEvents;
-import fr.gnark.sound.adapter.ScaleToEvents;
 import fr.gnark.sound.applications.Instruments;
+import fr.gnark.sound.domain.anticorruption.ChordProgressionToEvents;
+import fr.gnark.sound.domain.anticorruption.ScaleToEvents;
 import fr.gnark.sound.domain.music.*;
 import graphql.Assert;
 import org.junit.jupiter.api.Assertions;

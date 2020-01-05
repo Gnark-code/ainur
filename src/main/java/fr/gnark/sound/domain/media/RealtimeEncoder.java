@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.LineUnavailableException;
 
+/**
+ * Encodes Audio events using a an PCM output
+ */
 @Slf4j
 public class RealtimeEncoder {
     private final RealtimeAudioFormat output;

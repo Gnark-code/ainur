@@ -3,6 +3,8 @@ package fr.gnark.sound.domain.media.output;
 import javax.sound.sampled.AudioFormat;
 
 public class WavConstants {
+    private WavConstants() {}
+
     public static final double SAMPLE_RATE = 44100;
     public static final int SAMPLE_SIZE_IN_BITS = 16;
     public static final int CHANNELS = 2;

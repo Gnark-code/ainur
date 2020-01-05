@@ -28,7 +28,7 @@
     <properties>
         <lombok.version>1.18.6</lombok.version>
         <log4j.version>1.2.17</log4j.version>
-        <junit.version>5.2.0</junit.version>
+        <junit.version>5.5.2</junit.version>
         <xchart.version>3.6.0</xchart.version>
         <apache.lang3.version>3.9</apache.lang3.version>
         <apache.math.version>3.2</apache.math.version>
@@ -81,6 +81,9 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <exclusions>
+                <exclusion><groupId>junit</groupId><artifactId>junit</artifactId></exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

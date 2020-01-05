@@ -1,6 +1,6 @@
 package fr.gnark.sound.applications;
 
-import fr.gnark.sound.adapter.ScaleToEvents;
+import fr.gnark.sound.domain.anticorruption.ScaleToEvents;
 import fr.gnark.sound.domain.media.Events;
 import fr.gnark.sound.domain.media.WavEncoder;
 import fr.gnark.sound.domain.music.BaseNote;

@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 @ToString
 /**
- * Simultaneous events
+ * holder class for Simultaneous events
  */
 public class Events {
     private final Collection<Event> _events;

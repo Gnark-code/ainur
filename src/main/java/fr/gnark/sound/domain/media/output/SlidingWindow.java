@@ -2,6 +2,10 @@ package fr.gnark.sound.domain.media.output;
 
 import java.util.function.Consumer;
 
+/**
+ * Class that allow to declare in memory a circular buffer only once.
+ * Once the window is full, its content is flushed to a consumer if specified
+ */
 public class SlidingWindow {
     private final byte[] _buffer;
     final byte[] window;

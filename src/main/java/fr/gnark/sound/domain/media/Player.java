@@ -6,6 +6,7 @@ import java.util.*;
 
 /**
  * Created by Gnark on 13/04/2019.
+ * Allows playback in Java app if needed (great for testing algorithms, Chordinator or ScaleAGogo apps)
  */
 @Slf4j
 public class Player {

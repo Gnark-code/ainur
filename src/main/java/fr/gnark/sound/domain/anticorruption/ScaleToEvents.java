@@ -1,4 +1,4 @@
-package fr.gnark.sound.adapter;
+package fr.gnark.sound.domain.anticorruption;
 
 import fr.gnark.sound.domain.media.Event;
 import fr.gnark.sound.domain.media.Events;

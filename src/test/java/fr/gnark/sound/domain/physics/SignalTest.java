@@ -1,7 +1,7 @@
 package fr.gnark.sound.domain.physics;
 
-import fr.gnark.sound.adapter.ChordProgressionToEvents;
 import fr.gnark.sound.applications.Instruments;
+import fr.gnark.sound.domain.anticorruption.ChordProgressionToEvents;
 import fr.gnark.sound.domain.media.Dispatcher;
 import fr.gnark.sound.domain.media.Player;
 import fr.gnark.sound.domain.physics.waveforms.SineWave;

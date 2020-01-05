@@ -8,6 +8,10 @@ import javax.sound.sampled.SourceDataLine;
 
 import static fr.gnark.sound.domain.media.output.WavConstants.*;
 
+/**
+ * plays encoded bytes to the sound card.
+ * It uses a sliding window to write data each 10 ms
+ */
 @Slf4j
 public class RealtimeAudioFormat {
     private final SourceDataLine line;
