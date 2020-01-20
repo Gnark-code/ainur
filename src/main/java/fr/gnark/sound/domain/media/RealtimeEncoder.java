@@ -41,7 +41,7 @@ public class RealtimeEncoder {
                 amplitudeR += amplitudeR * (event.getPanning() / 100);
                 amplitudeL -= amplitudeL * (event.getPanning() / 100);
             }
-            output.storeData(amplitudeL * computed, amplitudeR * computed);
+            output.storeDataStereo(amplitudeL * computed, amplitudeR * computed);
             time += delta;
         }
         releaseEvent(event, time);
@@ -69,7 +69,7 @@ public class RealtimeEncoder {
                 amplitudeL -= amplitudeL * (event.getPanning() / 100);
             }
             computed += instrument.getSignal().computeFormula(event.getFrequency(), copy);
-            output.storeData(amplitudeL * computed, amplitudeR * computed);
+            output.storeDataStereo(amplitudeL * computed, amplitudeR * computed);
             copy += delta;
             localtime += delta;
         }

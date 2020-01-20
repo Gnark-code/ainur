@@ -7,9 +7,7 @@ import java.util.*;
 import static fr.gnark.sound.domain.media.output.WavConstants.SAMPLE_RATE;
 
 public abstract class Signal extends DomainObject {
-    protected static final double ONE_ON_PI = 1 / Math.PI;
-    protected static final double TWO_ON_PI = 2 * ONE_ON_PI;
-    protected static final double FOUR_ON_PI = 4 * ONE_ON_PI;
+
     protected final List<Double> overtonesCents;
     protected final List<Harmonic> harmonics;
     private final Map<Double, List<Double>> _buffer;

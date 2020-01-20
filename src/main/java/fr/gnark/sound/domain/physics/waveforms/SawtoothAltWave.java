@@ -2,6 +2,8 @@ package fr.gnark.sound.domain.physics.waveforms;
 
 import fr.gnark.sound.domain.physics.Signal;
 
+import static fr.gnark.sound.domain.physics.MathConstants.TWO_ON_PI;
+
 /**
  * Sawtooth with another phase
  */

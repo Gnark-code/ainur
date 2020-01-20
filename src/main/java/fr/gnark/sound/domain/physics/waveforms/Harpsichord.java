@@ -4,6 +4,7 @@ import fr.gnark.sound.domain.physics.Harmonic;
 import fr.gnark.sound.domain.physics.Signal;
 import lombok.extern.slf4j.Slf4j;
 
+import static fr.gnark.sound.domain.physics.MathConstants.TWO_ON_PI;
 import static java.lang.Math.*;
 
 /**

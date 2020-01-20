@@ -39,4 +39,8 @@ public class Harmonic extends DomainObject {
     public double getPhaseInRadians() {
         return phase * (Math.PI / 180);
     }
+
+    public static double convertToDegrees(final double phaseInRadians){
+        return phaseInRadians*(180/Math.PI);
+    }
 }
