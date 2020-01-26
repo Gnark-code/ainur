@@ -89,7 +89,7 @@ public class SampleImporter {
         // Get the number of audio channels in the wav file
         int numChannels = wavFile.getNumChannels();
 
-        // Create a buffer of 100 frames
+
         final int numberOfSamples = (int) Math.pow(2, 19);
         double[] buffer = new double[numberOfSamples];
         wavFile.readFrames(buffer, buffer.length);

@@ -19,7 +19,7 @@ public class Frames extends DomainObject {
     }
 
     public Frames addWithOverlap(final double[] data, final int overlap) {
-        for (int i = 0; i < data.length; i += (frameSize - overlap)) {
+        for (int i = 0; i < data.length; i +=  overlap) {
             if (i + frameSize < data.length) {
                 final double[] buffer = new double[frameSize];
                 System.arraycopy(data, i, buffer, 0, frameSize);

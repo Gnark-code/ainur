@@ -8,7 +8,7 @@ class OverlapAdderTest {
 
     @Test
     public void testOverlap(){
-        OverlapAdder overlapAdder = new OverlapAdder(1);
+        OverlapAdder overlapAdder = new OverlapAdder(2, 1);
         final double[] frame1 = new double[]{ 1 , 2 , 3};
         final double[] frame2 = new double[]{ 4 , 5 , 6};
         final double[] frame3 = new double[]{ 7 , 8 , 9};
