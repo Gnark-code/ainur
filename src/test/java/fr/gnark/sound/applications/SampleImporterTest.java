@@ -36,17 +36,16 @@ class SampleImporterTest {
 
     @Test
     public void pitchShift() throws IOException, UnsupportedAudioFileException, InterruptedException {
-
-        double[] data = sampleImporter.pitchShift("classpath:samples/guitar_e_44100_mono.wav",3.0);
-        getWindows(data);
-       /*  for (final double v : data) {
-            realtimeAudioFormat.storeDataMono(v);
-        }  */
+            double[] data = sampleImporter.pitchShift("classpath:samples/guitar_e_44100_mono.wav", 2.0);
+       //   getWindows(data);
+         for (final double v : data) {
+                realtimeAudioFormat.storeDataMono(v);
+            }
     }
 
     private void getWindows( final  double[] data ) throws InterruptedException {
         oscilloscope.addChart("new signal", "time", "amplitude", data);
-        for(int i =0 ; i<10; i++) {
+        for(int i =0 ; i<1; i++) {
             double[] window = new double[1024];
             System.arraycopy(data,i*window.length, window,0,window.length);
             oscilloscope.addChart("new signal"+i, "time", "amplitude", window);
