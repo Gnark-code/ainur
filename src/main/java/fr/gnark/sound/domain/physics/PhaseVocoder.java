@@ -48,7 +48,7 @@ public class PhaseVocoder {
             final double[] frame = iterator.next();
             final FftResult analysis = analysis(frame);
     //  final Complex[] newSignal = processing(analysis,previousFramePhase,phaseOut);
-            //newSignal = analysis.analysis;
+            //  final Complex[]     newSignal = analysis.analysis;
             final Complex[] newSignal = processing2(analysis, previousFramePhase, previousDeltaPhis, phaseOut, indexFrame);
             double[] outputFrame = synthesis(newSignal);
             outputFrames.add(outputFrame);
@@ -146,14 +146,16 @@ public class PhaseVocoder {
             final double previousDeltaPhi = previousDeltaPhis[index];
 
             final double windowRatio = (double) index / windowSize;
-            final double omegaBin = TWO_PI * sampleFrequency * windowRatio;
-            double deltaPhi = omegaBin + unwrapPhase2(phases[index] - previousPhaseIn - omegaBin );
-            if(indexFrame == 0) {
+            final double omegaBin = TWO_PI * hopAnalysis * windowRatio;
+            double deltaPhi = omegaBin + unwrapPhase2(phases[index] - previousPhaseIn - omegaBin);
+            if (indexFrame == 0) {
                 phaseOut[index] = phases[index];
-            }else{
+            } else {
                 phaseOut[index] = unwrapPhase2(previousPhaseOut + previousDeltaPhi * ratio);
             }
-            newSignal[index] = new Complex(magnitudes[index] * Math.cos(phaseOut[index]), magnitudes[index] * Math.sin(phaseOut[index]));
+            //newSignal[index] = new Complex(magnitudes[index] * Math.cos(phaseOut[index]), magnitudes[index] * Math.sin(phaseOut[index]));
+            //newSignal[index] = analysis.analysis[index];
+            newSignal[index] = new Complex(magnitudes[index]).multiply(Complex.I.multiply((omegaBin * (index / sampleFrequency)) + phaseOut[index]).exp());
             previousDeltaPhis[index] = deltaPhi;
             previousFramePhase[index] = phases[index];
             index++;
@@ -202,11 +204,7 @@ public class PhaseVocoder {
             int i = 0;
             for (final Complex value : analysis) {
                 magnitudes[i] = getAmplitude(value);
-                if (value.getReal() != 0.0) {
-                    phases[i] = Math.atan(value.getImaginary() / value.getReal());
-                } else {
-                    phases[i] = 0;
-                }
+                phases[i] = value.getArgument();
                 i++;
             }
         }

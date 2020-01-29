@@ -53,7 +53,7 @@ public abstract class Signal extends DomainObject {
 
 
     public double computeFormula(final double fundamentalFrequency, final double time) {
-        double result = 0;
+        double result;
         List<Double> bufferedValues = _buffer.get(fundamentalFrequency);
         if (bufferedValues == null) {
             result = innerComputeFormula(fundamentalFrequency, time);

@@ -13,8 +13,12 @@ public class SineWave extends Signal {
     protected double innerComputeFormula(final double fundamentalFrequency, final double time) {
         double twoPiF = 2 * Math.PI * fundamentalFrequency * time;
         double result = 0;
-        for (final Harmonic harmonic : harmonics) {
-            result += harmonic.getAmplitude() * Math.sin(twoPiF * harmonic.getRank());
+        if (harmonics.isEmpty()) {
+            result = Math.sin(twoPiF);
+        } else {
+            for (final Harmonic harmonic : harmonics) {
+                result += harmonic.getAmplitude() * Math.sin(twoPiF * harmonic.getRank());
+            }
         }
         return result;
     }
