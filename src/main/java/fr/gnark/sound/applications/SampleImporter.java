@@ -2,6 +2,7 @@ package fr.gnark.sound.applications;
 
 import fr.gnark.sound.domain.media.WavFile;
 import fr.gnark.sound.domain.media.output.WavConstants;
+import fr.gnark.sound.domain.physics.PhaseVocoder;
 import fr.gnark.sound.domain.physics.PitchShift;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,7 @@ public class SampleImporter {
 
     public SampleImporter(final ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-        this.pitchShift = new PitchShift(WavConstants.SAMPLE_RATE,1024);
+        this.pitchShift = new PitchShift(WavConstants.SAMPLE_RATE, 8192);
     }
 
     public double[] importSample(final String resourcePath) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
@@ -76,7 +77,29 @@ public class SampleImporter {
 
     }
 
-    public double[] pitchShift(final String resourcePath,final double ratio) throws IOException, UnsupportedAudioFileException {
+    public double[] stretch(final String resourcePath, final double ratio) throws IOException, UnsupportedAudioFileException {
+        Resource resource = resourceLoader.getResource(resourcePath);
+
+        // Open the wav file specified as the first argument
+        WavFile wavFile = WavFile.openWavFile(resource.getFile());
+        final AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(resource.getFile());
+
+        // Display information about the wav file
+        wavFile.display();
+
+        // Get the number of audio channels in the wav file
+        int numChannels = wavFile.getNumChannels();
+
+
+        final int numberOfSamples = (int) Math.pow(2, 19);
+        double[] buffer = new double[numberOfSamples];
+        wavFile.readFrames(buffer, buffer.length);
+        wavFile.close();
+
+        return new PhaseVocoder(WavConstants.SAMPLE_RATE, 2048, ratio).proceed(buffer);
+    }
+
+    public double[] pitchShift(final String resourcePath, final double ratio) throws IOException, UnsupportedAudioFileException {
         Resource resource = resourceLoader.getResource(resourcePath);
 
         // Open the wav file specified as the first argument
