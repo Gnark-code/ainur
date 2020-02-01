@@ -5,19 +5,16 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 
 public class PitchShift {
-    private final double sampleFrequency;
     private final LinearInterpolator linearInterpolator;
     private final int windowSize;
 
-    public PitchShift(final double sampleFrequency, final int windowSize) {
-        this.sampleFrequency = sampleFrequency;
+    public PitchShift(final int windowSize) {
         this.linearInterpolator = new LinearInterpolator();
         this.windowSize = windowSize;
     }
 
-
     public double[] shift(final double[] data, final double ratio) {
-        final double[] reconstructedSignal = new PhaseVocoder(sampleFrequency, windowSize, ratio).proceed(data);
+        final double[] reconstructedSignal = new PhaseVocoder(windowSize, ratio).proceed(data);
         return resample(reconstructedSignal, ratio);
     }
 

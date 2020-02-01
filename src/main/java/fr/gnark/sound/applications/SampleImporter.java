@@ -1,7 +1,6 @@
 package fr.gnark.sound.applications;
 
 import fr.gnark.sound.domain.media.WavFile;
-import fr.gnark.sound.domain.media.output.WavConstants;
 import fr.gnark.sound.domain.physics.PhaseVocoder;
 import fr.gnark.sound.domain.physics.PitchShift;
 import lombok.extern.slf4j.Slf4j;
@@ -9,115 +8,43 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import javax.sound.sampled.*;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-
-import static fr.gnark.sound.domain.media.output.WavConstants.GAIN;
 
 @Component
 @Slf4j
 public class SampleImporter {
+    private static final int WINDOW_SIZE = 8192;
     private ResourceLoader resourceLoader;
     private PitchShift pitchShift;
 
     public SampleImporter(final ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
-        this.pitchShift = new PitchShift(WavConstants.SAMPLE_RATE, 8192);
+        this.pitchShift = new PitchShift(WINDOW_SIZE);
     }
 
-    public double[] importSample(final String resourcePath) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
-        Resource resource = resourceLoader.getResource(resourcePath);
 
-        // Open the wav file specified as the first argument
-        WavFile wavFile = WavFile.openWavFile(resource.getFile());
-        final AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(resource.getFile());
+    public double[] stretch(final String resourcePath, final double ratio) throws IOException {
+        final double[] buffer = getWavBuffer(resourcePath);
+        return new PhaseVocoder(WINDOW_SIZE, ratio).proceed(buffer);
+    }
 
-        // Display information about the wav file
-        wavFile.display();
+    /**
+     * Extracts data from a wav file.
+     * Only mono has been tested for now, and it must be considered when using the double array returned.
+     */
+    private double[] getWavBuffer(final String resourcePath) throws IOException {
+        final Resource resource = resourceLoader.getResource(resourcePath);
 
-        // Get the number of audio channels in the wav file
-        int numChannels = wavFile.getNumChannels();
-
-        // Create a buffer of 100 frames
+        final WavFile wavFile = WavFile.openWavFile(resource.getFile());
         final int numberOfSamples = (int) Math.pow(2, 19);
-        double[] buffer = new double[numberOfSamples];
-
-
+        final double[] buffer = new double[numberOfSamples];
         wavFile.readFrames(buffer, buffer.length);
         wavFile.close();
-        double[] buffer2 = pitchShift.shift(buffer,1.00);
-
-        byte[] data = new byte[buffer2.length * 2];
-
-        int index = 0;
-        for (final double value : buffer2) {
-            int castLevelLeft = (int) (value * GAIN);
-            data[index] = (byte) (castLevelLeft);
-            data[index + 1] = (byte) (castLevelLeft >>> 8);
-            index = index + 2;
-        }
-
-
-
-        final AudioFormat audioFormat = audioFileFormat.getFormat();
-        final SourceDataLine line = AudioSystem.getSourceDataLine(audioFormat);
-        line.open(audioFormat);
-        line.write(data, 0, data.length);
-        line.drain();
-        line.close();
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        AudioInputStream audioInputStream = new AudioInputStream(bais, audioFormat, buffer.length);
-        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, File.createTempFile("test", ".wav"));
-        audioInputStream.close();
-
-
         return buffer;
-
     }
 
-    public double[] stretch(final String resourcePath, final double ratio) throws IOException, UnsupportedAudioFileException {
-        Resource resource = resourceLoader.getResource(resourcePath);
-
-        // Open the wav file specified as the first argument
-        WavFile wavFile = WavFile.openWavFile(resource.getFile());
-        final AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(resource.getFile());
-
-        // Display information about the wav file
-        wavFile.display();
-
-        // Get the number of audio channels in the wav file
-        int numChannels = wavFile.getNumChannels();
-
-
-        final int numberOfSamples = (int) Math.pow(2, 19);
-        double[] buffer = new double[numberOfSamples];
-        wavFile.readFrames(buffer, buffer.length);
-        wavFile.close();
-
-        return new PhaseVocoder(WavConstants.SAMPLE_RATE, 2048, ratio).proceed(buffer);
-    }
-
-    public double[] pitchShift(final String resourcePath, final double ratio) throws IOException, UnsupportedAudioFileException {
-        Resource resource = resourceLoader.getResource(resourcePath);
-
-        // Open the wav file specified as the first argument
-        WavFile wavFile = WavFile.openWavFile(resource.getFile());
-        final AudioFileFormat audioFileFormat = AudioSystem.getAudioFileFormat(resource.getFile());
-
-        // Display information about the wav file
-        wavFile.display();
-
-        // Get the number of audio channels in the wav file
-        int numChannels = wavFile.getNumChannels();
-
-
-        final int numberOfSamples = (int) Math.pow(2, 19);
-        double[] buffer = new double[numberOfSamples];
-        wavFile.readFrames(buffer, buffer.length);
-        wavFile.close();
-
-        return pitchShift.shift(buffer,ratio);
+    public double[] pitchShift(final String resourcePath, final double ratio) throws IOException {
+        final double[] buffer = getWavBuffer(resourcePath);
+        return pitchShift.shift(buffer, ratio);
     }
 }
