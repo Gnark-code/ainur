@@ -39,6 +39,15 @@ public class NoteTest {
     }
 
     @Test
+    public void testLowerOctave() {
+        Note note = Note.builder().baseNote(BaseNote.C).octave(2).build();
+        Note note2 = Note.builder().baseNote(BaseNote.D).octave(2).build();
+        assertEquals(BaseNote.B, note.transpose(-1).getBaseNote());
+        assertEquals(BaseNote.C, note2.transpose(-2).getBaseNote());
+
+    }
+
+    @Test
     public void
     testOverBoundMultipleOctaves() {
         Note note = Note.builder().baseNote(BaseNote.C).octave(1).build();

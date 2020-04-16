@@ -26,7 +26,12 @@ public class PitchShift {
         }
         PolynomialSplineFunction function = linearInterpolator.interpolate(x, reconstructedSignal);
         for (int i = 0; i < result.length; i++) {
-            result[i] = function.value(i * ratio);
+            double value = i * ratio;
+            if (value < x.length) {
+                result[i] = function.value(value);
+            } else {
+                result[i] = function.value(Math.round(value));
+            }
         }
 
         return result;

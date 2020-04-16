@@ -1,9 +1,6 @@
 package fr.gnark.sound.domain.physics;
 
-import fr.gnark.sound.applications.Instruments;
 import fr.gnark.sound.domain.anticorruption.ChordProgressionToEvents;
-import fr.gnark.sound.domain.media.Dispatcher;
-import fr.gnark.sound.domain.media.Player;
 import fr.gnark.sound.domain.physics.waveforms.SineWave;
 import graphql.Assert;
 import org.junit.jupiter.api.Disabled;
@@ -11,23 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
-import javax.sound.sampled.LineUnavailableException;
-import java.util.List;
-
 /**
  * Class used to debug Signal processing
  */
 @Disabled("Useful to debug waveforms")
 class SignalTest {
-    private Instruments instruments = new Instruments();
     private static int BPM = 500;
     private static final int TICKS_BY_WHOLE_NOTE = 128;
     final double definitionInMs = 60000.0 / (BPM * (TICKS_BY_WHOLE_NOTE / 4.0));
-    private final Player player;
 
-    public SignalTest() throws LineUnavailableException {
-        player = new Player(new Dispatcher(64, instruments.getProxy()), definitionInMs);
-    }
 
     private static final ChordProgressionToEvents CHORD_PROGRESSION_TO_EVENTS = new ChordProgressionToEvents(TICKS_BY_WHOLE_NOTE);
 
@@ -36,12 +25,12 @@ class SignalTest {
     void computeBuffer() throws InterruptedException {
         Signal signal = new SineWave()
                 .initBufferIfNecessary(440);
-        List<Double> buffer = signal.getBuffer().get(440.0);
-        double[] xData = new double[buffer.size()];
-        double[] yData = new double[buffer.size()];
-        for (int i = 0; i < buffer.size(); i++) {
+        double[] buffer = signal.getBuffer().get(440.0);
+        double[] xData = new double[buffer.length];
+        double[] yData = new double[buffer.length];
+        for (int i = 0; i < buffer.length; i++) {
             xData[i] = i;
-            yData[i] = buffer.get(i);
+            yData[i] = buffer[i];
         }
 
         // Create Chart

@@ -44,6 +44,4 @@ public class Frames extends DomainObject {
     public int size() {
         return _frames.size();
     }
-
-
 }

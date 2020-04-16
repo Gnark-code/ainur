@@ -3,6 +3,8 @@ package fr.gnark.sound.applications;
 import fr.gnark.sound.domain.media.Instrument;
 import fr.gnark.sound.domain.media.InstrumentImpl;
 import fr.gnark.sound.domain.media.InstrumentProxy;
+import fr.gnark.sound.domain.music.BaseNote;
+import fr.gnark.sound.domain.music.Note;
 import fr.gnark.sound.domain.physics.waveforms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,7 +19,10 @@ public class Instruments {
     private InstrumentProxy proxy;
     private int index = 0;
 
-    public Instruments() {
+    private SampleImporter sampleImporter;
+
+    public Instruments(final SampleImporter sampleImporter) {
+        this.sampleImporter = sampleImporter;
         EnvelopeADSR envelopeADSR = EnvelopeADSR.builder()
                 .attackInSeconds(0.02)
                 .decayInSeconds(0.01)
@@ -56,7 +61,34 @@ public class Instruments {
                         .build()));
         _instruments.add(getFlute());
         _instruments.add(getHarpsichord());
+        // TODO : uncomment when performances of samples loading are better
+        //  _instruments.add(getGuitar());
         proxy = new InstrumentProxy(_instruments.get(0));
+    }
+
+    private InstrumentImpl getGuitar() {
+        final Guitar guitar = new Guitar();
+        final double[] baseSample = this.sampleImporter.getWavBuffer("classpath:samples/guitar_e_44100_mono.wav");
+        final Note e = Note.builder().octave(2).baseNote(BaseNote.E).build();
+        guitar.addSampleData(baseSample, e.convertToFrequency());
+
+        for (int semiToneUp = 1; semiToneUp < 4 * 12; semiToneUp++) {
+            final double ratio = Math.pow(2, (semiToneUp / 12.0));
+            guitar.addSampleData(this.sampleImporter.pitchShift(baseSample, ratio), e.transpose(semiToneUp).convertToFrequency());
+        }
+
+        for (int semitoneDown = 1; semitoneDown < 6; semitoneDown++) {
+            final double ratio = Math.pow(2, (-semitoneDown / 12.0));
+            guitar.addSampleData(this.sampleImporter.pitchShift(baseSample, ratio), e.transpose(-semitoneDown).convertToFrequency());
+        }
+        return new InstrumentImpl("Guitar",
+                guitar,
+                EnvelopeADSR.builder()
+                        .attackInSeconds(0.02)
+                        .decayInSeconds(0.00001)
+                        .sustainFactorinDbfs(-1.0)
+                        .releaseInSeconds(0.00001)
+                        .build());
     }
 
     private InstrumentImpl getHarpsichord() {

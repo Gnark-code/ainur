@@ -34,6 +34,10 @@ public class Note extends DomainObject {
                 final int octaveToAdd = index / NB_STEPS;
                 octaveValue = this.octave + octaveToAdd;
                 index = index - (octaveToAdd * NB_STEPS);
+            } else if (index < 0) {
+                final int octaveToRemove = 1 - index / NB_STEPS;
+                octaveValue = this.octave - octaveToRemove;
+                index = octaveToRemove * NB_STEPS + index;
             }
             return Note.builder()
                     .octave(octaveValue)

@@ -14,15 +14,16 @@ public class PhaseVocoder {
     private final int windowSize;
     private final double[] w;
     private final int hopAnalysis;
-    private final double hopSynthesis;
+    private final int hopSynthesis;
     private final double outputSmoothingFactor;
     private final FastFourierTransformer fastFourierTransformer;
 
     public PhaseVocoder(final int windowSize, final double ratio) {
         this.windowSize = windowSize;
         hopAnalysis = windowSize / 4;
-        hopSynthesis = hopAnalysis * ratio;
-        outputSmoothingFactor = Math.sqrt(this.windowSize / (2 * hopSynthesis));
+        hopSynthesis = (int) (hopAnalysis * ratio);
+
+        outputSmoothingFactor = Math.sqrt(this.windowSize / (2.0 * hopSynthesis));
         this.w = new double[windowSize];
         for (int n = 0; n < windowSize; n++) {
             this.w[n] = hannFunction(n);
@@ -47,7 +48,6 @@ public class PhaseVocoder {
     }
 
 
-
     private double hannFunction(final int n) {
         final double windowRatio = (double) n / windowSize;
         return 0.5 * (1 - Math.cos(TWO_PI * windowRatio));
@@ -68,7 +68,7 @@ public class PhaseVocoder {
     private Complex[] processing(final FftResult analysis, final double[] previousFramePhase, final double[] phaseOut) {
         final double[] magnitudes = analysis.getMagnitudes();
         final double[] phases = analysis.getPhases();
-        final double ratio = hopSynthesis / hopAnalysis;
+        final double ratio = (double) hopSynthesis / hopAnalysis;
 
 
         int index = 0;

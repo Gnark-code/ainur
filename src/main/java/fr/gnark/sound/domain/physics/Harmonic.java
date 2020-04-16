@@ -12,15 +12,15 @@ import lombok.Getter;
 public class Harmonic extends DomainObject {
     private int index;
     private Double amplitude;
-    private Double phase;
+    private Double phaseInDegrees;
     private Double variationFromFundamentalInCents;
 
     @Builder
-    public Harmonic(final int index, final Double amplitude, final Double phase,
+    public Harmonic(final int index, final Double amplitude, final Double phaseInDegrees,
                     final Double variationFromFundamentalInCents) {
         this.index = index;
         this.amplitude = amplitude != null ? amplitude : 1;
-        this.phase = phase != null ? phase : 0;
+        this.phaseInDegrees = phaseInDegrees != null ? phaseInDegrees : 0;
         this.variationFromFundamentalInCents = variationFromFundamentalInCents != null ? variationFromFundamentalInCents : 0;
     }
 
@@ -37,7 +37,7 @@ public class Harmonic extends DomainObject {
     }
 
     public double getPhaseInRadians() {
-        return phase * (Math.PI / 180);
+        return phaseInDegrees * (Math.PI / 180);
     }
 
     public static double convertToDegrees(final double phaseInRadians){

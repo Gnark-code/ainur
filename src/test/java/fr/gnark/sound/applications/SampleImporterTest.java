@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,7 +34,7 @@ class SampleImporterTest {
 
 
     @Test
-    public void maple() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public void maple() throws IOException {
         double[] data = sampleImporter.stretch("classpath:samples/maple.wav", 1.0);
         Assertions.assertNotNull(data);
         for (final double v : data) {
@@ -45,7 +44,7 @@ class SampleImporterTest {
 
     @Test
     public void pitchShift() throws Exception {
-        double[] data = sampleImporter.pitchShift("classpath:samples/guitar_e_44100_mono.wav", 1.00);
+        double[] data = sampleImporter.pitchShift("classpath:samples/guitar_e_44100_mono.wav", 1.0);
         Assertions.assertNotNull(data);
         //  getWindows(data);
         for (final double v : data) {

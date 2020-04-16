@@ -22,31 +22,31 @@ public class Warp extends Signal {
         final double totalAmplitude = 1522.4 + 611.3 + 412.6 + 195.7 + 66.1;
         this.addHarmonics(
                 Harmonic.builder()
-                        .phase(-110.94)
+                        .phaseInDegrees(-110.94)
                         .amplitude(1522.4 / totalAmplitude)
                         .variationFromFundamentalInCents(overtonesCents.get(0))
                         .build())
                 .addHarmonics(
                         Harmonic.builder()
-                                .phase(122.091)
+                                .phaseInDegrees(122.091)
                                 .amplitude(611.3 / totalAmplitude)
                                 .variationFromFundamentalInCents(overtonesCents.get(1))
                                 .build())
                 .addHarmonics(
                         Harmonic.builder()
-                                .phase(-142.0)
+                                .phaseInDegrees(-142.0)
                                 .amplitude(412.6 / totalAmplitude)
                                 .variationFromFundamentalInCents(overtonesCents.get(2))
                                 .build())
                 .addHarmonics(
                         Harmonic.builder()
-                                .phase(-160.32)
+                                .phaseInDegrees(-160.32)
                                 .amplitude(195.7 / totalAmplitude)
                                 .variationFromFundamentalInCents(overtonesCents.get(3))
                                 .build())
                 .addHarmonics(
                         Harmonic.builder()
-                                .phase(-17.5336)
+                                .phaseInDegrees(-17.5336)
                                 .amplitude(66.1 / totalAmplitude)
                                 .variationFromFundamentalInCents(overtonesCents.get(4))
                                 .build())

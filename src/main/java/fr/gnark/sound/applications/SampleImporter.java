@@ -8,8 +8,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
 @Slf4j
 public class SampleImporter {
@@ -23,7 +21,7 @@ public class SampleImporter {
     }
 
 
-    public double[] stretch(final String resourcePath, final double ratio) throws IOException {
+    public double[] stretch(final String resourcePath, final double ratio) {
         final double[] buffer = getWavBuffer(resourcePath);
         return new PhaseVocoder(WINDOW_SIZE, ratio).proceed(buffer);
     }
@@ -32,19 +30,27 @@ public class SampleImporter {
      * Extracts data from a wav file.
      * Only mono has been tested for now, and it must be considered when using the double array returned.
      */
-    private double[] getWavBuffer(final String resourcePath) throws IOException {
+    public double[] getWavBuffer(final String resourcePath) {
         final Resource resource = resourceLoader.getResource(resourcePath);
 
-        final WavFile wavFile = WavFile.openWavFile(resource.getFile());
         final int numberOfSamples = (int) Math.pow(2, 19);
         final double[] buffer = new double[numberOfSamples];
-        wavFile.readFrames(buffer, buffer.length);
-        wavFile.close();
+        try {
+            final WavFile wavFile = WavFile.openWavFile(resource.getFile());
+            wavFile.readFrames(buffer, buffer.length);
+            wavFile.close();
+        } catch (final Exception e) {
+            log.error("error caught while reading wav file", e);
+        }
         return buffer;
     }
 
-    public double[] pitchShift(final String resourcePath, final double ratio) throws IOException {
+    public double[] pitchShift(final String resourcePath, final double ratio) {
         final double[] buffer = getWavBuffer(resourcePath);
         return pitchShift.shift(buffer, ratio);
+    }
+
+    public double[] pitchShift(final double[] data, final double ratio) {
+        return pitchShift.shift(data, ratio);
     }
 }

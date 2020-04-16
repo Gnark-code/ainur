@@ -8,6 +8,8 @@ import graphql.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.PostConstruct;
 import javax.sound.sampled.LineUnavailableException;
@@ -23,23 +25,21 @@ import static java.util.Arrays.asList;
  * Class used to debug event processing
  */
 @Disabled("Needs a computer with sound card to run")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PlayerTest {
-    private Instruments instruments = new Instruments();
+    @Autowired
+    private Instruments instruments;
     private static final int TICKS_BY_WHOLE_NOTE = 128;
     private static final ChordProgressionToEvents CHORD_PROGRESSION_TO_EVENTS = new ChordProgressionToEvents(TICKS_BY_WHOLE_NOTE);
     private static int BPM = 135;
     final double definitionInMs = 60000.0 / (BPM * (TICKS_BY_WHOLE_NOTE / 4.0));
-    private final Player player;
-
-    public PlayerTest() throws LineUnavailableException {
-        player = new Player(new Dispatcher(64, instruments.getProxy()), definitionInMs);
-    }
-
+    private Player player;
 
     @PostConstruct
     private void init() throws LineUnavailableException {
-
+        player = new Player(new Dispatcher(64, instruments.getProxy()), definitionInMs);
     }
+
 
     @Test
     public void test() throws Exception {

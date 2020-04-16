@@ -10,7 +10,7 @@ public abstract class Signal extends DomainObject {
 
     protected final List<Double> overtonesCents;
     protected final List<Harmonic> harmonics;
-    private final Map<Double, List<Double>> _buffer;
+    protected final Map<Double, double[]> _buffer;
 
     protected Signal() {
         _buffer = new HashMap<>();
@@ -18,7 +18,7 @@ public abstract class Signal extends DomainObject {
         harmonics = new ArrayList<>();
     }
 
-    Map<Double, List<Double>> getBuffer() {
+    Map<Double, double[]> getBuffer() {
         return _buffer;
     }
 
@@ -54,7 +54,7 @@ public abstract class Signal extends DomainObject {
 
     public double computeFormula(final double fundamentalFrequency, final double time) {
         double result;
-        List<Double> bufferedValues = _buffer.get(fundamentalFrequency);
+        double[] bufferedValues = _buffer.get(fundamentalFrequency);
         if (bufferedValues == null) {
             result = innerComputeFormula(fundamentalFrequency, time);
         } else {
@@ -64,28 +64,28 @@ public abstract class Signal extends DomainObject {
     }
 
     public Signal initBufferIfNecessary(final double fundamentalFrequency) {
-        List<Double> bufferedValues = _buffer.get(fundamentalFrequency);
+        double[] bufferedValues = _buffer.get(fundamentalFrequency);
         if (bufferedValues == null) {
-            bufferedValues = new ArrayList<>((int) (SAMPLE_RATE / fundamentalFrequency));
+            bufferedValues = new double[(int) (SAMPLE_RATE / fundamentalFrequency)];
             int maxSize = (int) (SAMPLE_RATE * 2 / fundamentalFrequency);
             for (int i = 0; i < maxSize; i++) {
-                bufferedValues.add(innerComputeFormula(fundamentalFrequency, i / SAMPLE_RATE));
+                bufferedValues[i] = innerComputeFormula(fundamentalFrequency, i / SAMPLE_RATE);
             }
             _buffer.put(fundamentalFrequency, bufferedValues);
         }
         return this;
     }
 
-    private double getResultFromBuffer(final double fundamentalFrequency, final double time, final List<Double> bufferedValues) {
+    protected double getResultFromBuffer(final double fundamentalFrequency, final double time, final double[] bufferedValues) {
         final double result;//get from buffer
         if (time >= 0) {
             double timeInCurrentPeriod = time % (1 / fundamentalFrequency);
             final int index = (int) (timeInCurrentPeriod * SAMPLE_RATE);
-            if (index < bufferedValues.size()) {
-                result = bufferedValues.get(index);
+            if (index < bufferedValues.length) {
+                result = bufferedValues[index];
             } else //rounding error
-                if (index == bufferedValues.size()) {
-                    result = bufferedValues.get(index - 1);
+                if (index == bufferedValues.length) {
+                    result = bufferedValues[index - 1];
                 } else {
                     throw new IllegalArgumentException("Gnark does not know how to code a buffer");
                 }
@@ -96,8 +96,4 @@ public abstract class Signal extends DomainObject {
     }
 
     protected abstract double innerComputeFormula(final double fundamentalFrequency, final double time);
-
-    protected void removeHarmonic(final int i) {
-        harmonics.remove(i);
-    }
 }
