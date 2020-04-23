@@ -1,6 +1,7 @@
 package fr.gnark.sound.domain.music;
 
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,5 +67,12 @@ public class NoteTest {
         ).octave(3)
                 .build().convertToFrequency();
         assertTrue(firstFreq < secondFrequency);
+    }
+
+    @Test
+    public void testGetFromFrequency() {
+        final double aFlatFrequency = 207.01;
+        Note note = Note.getFromFrequency(aFlatFrequency, 10.0).orElse(null);
+        Assertions.assertEquals(Note.builder().baseNote(BaseNote.A_FLAT).octave(2).build(), note);
     }
 }

@@ -1,6 +1,5 @@
 package fr.gnark.sound.domain.physics;
 
-import lombok.Getter;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -107,26 +106,6 @@ public class PhaseVocoder {
         return (((phaseIn + Math.PI) % (-2 * Math.PI)) + Math.PI);
     }
 
-    @Getter
-    private class FftResult {
-        private final Complex[] analysis;
-        private final double[] magnitudes;
-        private final double[] phases;
 
-        public FftResult(final Complex[] analysis) {
-            this.analysis = analysis;
-            magnitudes = new double[analysis.length];
-            phases = new double[analysis.length];
-            int i = 0;
-            for (final Complex value : analysis) {
-                magnitudes[i] = getAmplitude(value);
-                phases[i] = value.getArgument();
-                i++;
-            }
-        }
-    }
 
-    public double getAmplitude(final Complex value) {
-        return Math.sqrt(value.getImaginary() * value.getImaginary() + value.getReal() * value.getReal());
-    }
 }

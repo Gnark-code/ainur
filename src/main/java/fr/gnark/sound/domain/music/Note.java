@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Iterator;
+import java.util.Optional;
+
 /**
  * Created by Gnark on 17/06/2019.
  */
@@ -72,6 +75,22 @@ public class Note extends DomainObject {
         if (octave < 0 || octave > 10) {
             throw new IllegalArgumentException("octave should be set between 0 and 8. value read:" + octave);
         }
+    }
+
+    public static Optional<Note> getFromFrequency(final double frequency, final double toleranceInCents) {
+        final double minFrequency = frequency * Math.pow(2, -toleranceInCents / 1200.0);
+        final double maxFrequency = frequency * Math.pow(2, toleranceInCents / 1200.0);
+        for (int octaveIndex = 0; octaveIndex < 10; octaveIndex++) {
+            final Iterator<BaseNote> baseNoteIterator = BaseNote.iterator();
+            while (baseNoteIterator.hasNext()) {
+                final Note note = Note.builder().baseNote(baseNoteIterator.next()).octave(octaveIndex).build();
+                final double freq = note.convertToFrequency();
+                if (freq > minFrequency && freq < maxFrequency) {
+                    return Optional.of(note);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
 }
