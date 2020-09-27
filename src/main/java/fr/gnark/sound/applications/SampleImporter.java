@@ -33,14 +33,24 @@ public class SampleImporter {
     public double[] getWavBuffer(final String resourcePath) {
         final Resource resource = resourceLoader.getResource(resourcePath);
 
-        final int numberOfSamples = (int) Math.pow(2, 19);
-        final double[] buffer = new double[numberOfSamples];
+        final double[] buffer = new double[(int) Math.pow(2, 25)];
+        boolean isStereo = false;
         try {
             final WavFile wavFile = WavFile.openWavFile(resource.getFile());
+            isStereo = wavFile.getNumChannels() == 2;
             wavFile.readFrames(buffer, buffer.length);
             wavFile.close();
         } catch (final Exception e) {
             log.error("error caught while reading wav file", e);
+        }
+        if (isStereo) {
+            //merge interlaced samples
+            final double[] mergedBuffer = new double[buffer.length / 2];
+            int j = 0;
+            for (int i = 0; i < buffer.length - 2; i = i + 2) {
+                mergedBuffer[++j] = ((buffer[i] + buffer[i + 1]) / 2.0);
+            }
+            return mergedBuffer;
         }
         return buffer;
     }

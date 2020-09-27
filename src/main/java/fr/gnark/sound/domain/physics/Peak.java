@@ -1,8 +1,10 @@
 package fr.gnark.sound.domain.physics;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class Peak {
     private double frequency;
     private double magnitude;

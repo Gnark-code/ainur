@@ -16,7 +16,5 @@ class FramesTest {
         final double[] frame1 = iterator.next();
         final double[] frame2 =  iterator.next();
         Assertions.assertEquals(frame1[1], frame2[0]);
-
-
     }
 }

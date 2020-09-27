@@ -78,13 +78,17 @@ public class Note extends DomainObject {
     }
 
     public static Optional<Note> getFromFrequency(final double frequency, final double toleranceInCents) {
+        return getFromFrequency(frequency, toleranceInCents, 0.0);
+    }
+
+    public static Optional<Note> getFromFrequency(final double frequency, final double toleranceInCents, final double biasInCents) {
         final double minFrequency = frequency * Math.pow(2, -toleranceInCents / 1200.0);
         final double maxFrequency = frequency * Math.pow(2, toleranceInCents / 1200.0);
         for (int octaveIndex = 0; octaveIndex < 10; octaveIndex++) {
             final Iterator<BaseNote> baseNoteIterator = BaseNote.iterator();
             while (baseNoteIterator.hasNext()) {
                 final Note note = Note.builder().baseNote(baseNoteIterator.next()).octave(octaveIndex).build();
-                final double freq = note.convertToFrequency();
+                final double freq = note.convertToFrequency() * Math.pow(2, biasInCents / 1200.0);
                 if (freq > minFrequency && freq < maxFrequency) {
                     return Optional.of(note);
                 }
